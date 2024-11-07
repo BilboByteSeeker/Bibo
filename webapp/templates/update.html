@@ -1,49 +1,33 @@
-{% extends "layout.html" %}
-{% block content %}
+{% extends "settings.html" %}
+{% block settings_content %}
 <div class="update-container">
-    <!-- System Update Section -->
     <section class="update-section">
         <h2>System Update</h2>
+        <div id="update-status" class="update-status">
+            <!-- Statusmeldung -->
+        </div>
         <div class="update-options">
-            <button onclick="checkSystemUpdates()">Auf Updates prüfen</button>
-            <span id="system-update-status" class="update-status"></span>
-            <button onclick="installSystemUpdates()">Updates installieren</button>
+            <button id="check-updates-btn" onclick="checkSystemUpdates()" class="update-button">
+                <span class="button-text">Auf Updates prüfen</span>
+                <span class="loading-spinner hidden"></span>
+            </button>
+            <button id="install-updates-btn" onclick="installSystemUpdates()" class="update-button">
+                <span class="button-text">Updates installieren</span>
+                <span class="loading-spinner hidden"></span>
+            </button>
         </div>
         <div class="auto-update">
             <label class="switch">
                 <input type="checkbox" id="system-auto-update-toggle">
                 <span class="slider"></span>
             </label>
-            <span>Automatische Updates</span>
-            <div id="system-auto-update-settings" class="hidden">
-                <label for="system-auto-update-interval">Intervall:</label>
-                <input type="number" id="system-auto-update-interval" value="60" min="1" max="1440" step="1">
-                <span>Minuten</span>
-                <button onclick="setSystemAutoUpdate()">Speichern</button>
-            </div>
+            <span>Automatische Updates aktivieren</span>
         </div>
-    </section>
-
-    <!-- Repository Update Section -->
-    <section class="update-section">
-        <h2>Repository Update</h2>
-        <div class="update-options">
-            <button onclick="checkRepoUpdates()">Auf Updates prüfen</button>
-            <span id="repo-update-status" class="update-status"></span>
-            <button onclick="installRepoUpdates()">Updates installieren</button>
-        </div>
-        <div class="auto-update">
-            <label class="switch">
-                <input type="checkbox" id="repo-auto-update-toggle">
-                <span class="slider"></span>
-            </label>
-            <span>Automatische Updates</span>
-            <div id="repo-auto-update-settings" class="hidden">
-                <label for="repo-auto-update-interval">Intervall:</label>
-                <input type="number" id="repo-auto-update-interval" value="60" min="1" max="1440" step="1">
-                <span>Minuten</span>
-                <button onclick="setRepoAutoUpdate()">Speichern</button>
-            </div>
+        <div class="auto-update-interval">
+            <label for="system-auto-update-interval">Intervall:</label>
+            <input type="number" id="system-auto-update-interval" value="720" min="1" max="1440" step="1">
+            <span>Minuten</span>
+            <button id="save-interval-btn" onclick="setSystemAutoUpdate()">Speichern</button>
         </div>
     </section>
 </div>

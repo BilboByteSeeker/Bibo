@@ -1,19 +1,20 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="settings-container">
-    <!-- Linke Leiste -->
+    <!-- Linke Navigationsleiste -->
     <aside class="settings-sidebar">
         <ul>
-            <li><a href="/wifi" class="settings-link">WiFi</a></li>
-            <li><a href="/update" class="settings-link">Update</a></li>
-            <li><a href="/bluetooth" class="settings-link">Bluetooth</a></li>
+            <li><a href="/settings/wifi" class="settings-link {% if 'wifi' in request.path %}active{% endif %}">WiFi</a></li>
+            <li><a href="/settings/update" class="settings-link {% if 'update' in request.path %}active{% endif %}">Update</a></li>
+            <li><a href="/settings/bluetooth" class="settings-link {% if 'bluetooth' in request.path %}active{% endif %}">Bluetooth</a></li>
         </ul>
     </aside>
 
-    <!-- Rechte Spalte -->
-    <section class="settings-content" id="settings-content">
-        <h2>Settings</h2>
-        <p>Select an option from the left menu to configure your settings.</p>
+    <!-- Dynamischer Bereich -->
+    <section class="settings-content">
+        {% block settings_content %}
+        <p>Wähle eine Option aus der linken Navigationsleiste aus.</p>
+        {% endblock %}
     </section>
 </div>
 {% endblock %}

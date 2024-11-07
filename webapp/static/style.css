@@ -109,7 +109,7 @@ main {
 
 /* Linke Leiste */
 .settings-sidebar {
-    width: 15%; /* Schmalere Leiste */
+    width: 15%;
     background-color: #1f1f1f;
     border-right: 2px solid #333333;
     padding: 20px;
@@ -124,7 +124,7 @@ main {
 }
 
 .settings-sidebar li {
-    margin: 15px 0;
+    margin: 5px 0; /* Reduzierter Abstand zwischen den Einträgen */
 }
 
 .settings-link {
@@ -151,7 +151,7 @@ main {
 
 /* Rechte Spalte */
 .settings-content {
-    width: 85%; /* Entspricht dem Restplatz neben der schmaleren Leiste */
+    width: 85%;
     padding: 20px;
     box-sizing: border-box;
 }
@@ -160,8 +160,9 @@ main {
 .update-container {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    align-items: center;
     margin-top: 20px;
+    gap: 20px;
 }
 
 .update-section {
@@ -169,60 +170,82 @@ main {
     padding: 20px;
     border-radius: 8px;
     border: 2px solid #333333;
+    width: 400px;
 }
 
 .update-section h2 {
     margin: 0 0 20px;
+    text-align: center;
 }
 
+/* Update-Status */
+.update-status {
+    margin: 20px 0;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.update-status.available {
+    color: green;
+}
+
+.update-status.unavailable {
+    color: red;
+}
+
+/* Update-Buttons Abstand (untereinander) */
 .update-options {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    flex-direction: column; /* Buttons untereinander */
+    gap: 15px; /* Abstand zwischen den Buttons */
+    align-items: center; /* Zentriert die Buttons */
 }
 
-.update-options button {
+/* Update-Buttons */
+.update-button {
+    position: relative;
     padding: 10px 15px;
-    background-color: #007BFF;
-    color: #ffffff;
+    font-size: 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    background-color: #007BFF;
+    color: white;
     transition: background-color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 200px;
 }
 
-.update-options button:hover {
+.update-button:hover {
     background-color: #0056b3;
 }
 
-.auto-update {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.update-button:disabled {
+    background-color: #888;
+    cursor: not-allowed;
 }
 
-.auto-update input {
-    width: 60px;
-    padding: 5px;
-    text-align: center;
-    border: 1px solid #555555;
-    border-radius: 4px;
-    background-color: #2a2a2a;
-    color: #ffffff;
+/* Lade-Symbol */
+.loading-spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007BFF;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
 }
 
-.auto-update button {
-    padding: 10px 15px;
-    background-color: #28a745;
-    color: #ffffff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.auto-update button:hover {
-    background-color: #1e7e34;
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Schiebeschalter (Switch) */
@@ -272,14 +295,7 @@ input:checked + .slider:before {
     transform: translateX(14px);
 }
 
-/* Statusanzeige */
-.update-status {
-    margin-left: 10px;
-    font-weight: bold;
-}
-.update-status.available {
-    color: green;
-}
-.update-status.unavailable {
-    color: red;
+/* Versteckte Elemente */
+.hidden {
+    display: none;
 }
