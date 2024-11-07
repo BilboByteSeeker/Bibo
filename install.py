@@ -12,15 +12,18 @@ def run_command(command, use_sudo=False):
 def main():
     # Benutzer ermitteln, der das Skript gestartet hat
     user = os.environ.get("SUDO_USER", getpass.getuser())
-    home_dir = os.path.expanduser(f"~{user}")
+    home_dir = f"/home/{user}"  # Benutzerverzeichnis basierend auf Benutzername
+
+    # Pfade für die Web-App und `app.py`
+    webapp_dir = f"{home_dir}/Bibo/webapp"
+    app_py_path = f"{webapp_dir}/app.py"  # Pfad zu app.py angepasst
 
     # Update und Installation der notwendigen Pakete
     run_command("apt update && apt upgrade -y", use_sudo=True)
     run_command("apt install python3 python3-pip python3-venv nginx -y", use_sudo=True)
     run_command("pip install flask gunicorn")
 
-    # Einrichten der Webanwendung
-    webapp_dir = f"{home_dir}/webapp"
+    # Webanwendung einrichten
     if not os.path.exists(webapp_dir):
         os.makedirs(webapp_dir)
 
@@ -93,18 +96,25 @@ WantedBy=multi-user.target
     run_command(f"mv webapp_sudoers {visudo_path}", use_sudo=True)
 
     # `app.py` aktualisieren, falls vorhanden
-    app_py_path = f"{home_dir}/bibo/app.py"
+    print(f"Checking for app.py at {app_py_path}...")  # Debug-Ausgabe
     if os.path.exists(app_py_path):
+        print(f"Found app.py at {app_py_path}. Updating...")
         with open(app_py_path, "r") as app_py_file:
-            app_content = app_py_file.read()
-        updated_content = app_content.replace(
-            'REPO_PATH =', f'REPO_PATH = "{home_dir}/bibo"'
-        )
+            lines = app_py_file.readlines()
+
+        # Ersetze die Zeile mit `REPO_PATH =`
         with open(app_py_path, "w") as app_py_file:
-            app_py_file.write(updated_content)
+            for line in lines:
+                if line.strip().startswith("REPO_PATH ="):
+                    # Setze den neuen Pfad
+                    app_py_file.write(f'REPO_PATH = "{home_dir}/Bibo"\n')
+                else:
+                    # Schreibe andere Zeilen unverändert
+                    app_py_file.write(line)
+
         print(f"Updated REPO_PATH in {app_py_path}")
     else:
-        print(f"app.py not found in {home_dir}/bibo. Skipping update.")
+        print(f"app.py not found in {app_py_path}. Skipping update.")
 
     print("Setup completed successfully!")
 
