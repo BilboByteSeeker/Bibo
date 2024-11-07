@@ -1,0 +1,226 @@
+/* Allgemeines Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* Header Styling */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1f1f1f;
+    border-bottom: 2px solid #333333;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+/* Styling für Header-Link */
+.header-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.header-link:hover {
+    text-decoration: underline;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+}
+
+.status img {
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* Navigation Styling */
+.nav-link {
+    text-decoration: none;
+    padding: 10px 15px;
+    display: inline-block;
+    color: #ffffff;
+    border-bottom: 2px solid transparent;
+    background-color: #1f1f1f;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    border-bottom: 2px solid #007BFF;
+    color: #007BFF;
+}
+
+/* Main Content */
+main {
+    padding: 20px;
+}
+
+/* Dropdown Styling */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #333333;
+    border: 1px solid #555555;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #333333;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: #444444;
+}
+
+#shutdown-icon {
+    cursor: pointer;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Settings-Seite Styling */
+.settings-container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+}
+
+/* Linke Leiste */
+.settings-sidebar {
+    width: 15%; /* Schmalere Leiste */
+    background-color: #1f1f1f;
+    border-right: 2px solid #333333;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 8px;
+}
+
+.settings-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.settings-sidebar li {
+    margin: 15px 0;
+}
+
+.settings-link {
+    text-decoration: none;
+    color: #ffffff;
+    display: block;
+    padding: 10px 15px;
+    border-radius: 6px;
+    background-color: #333333;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
+}
+
+.settings-link:hover {
+    background-color: #007BFF;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.settings-link.active {
+    background-color: #007BFF;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* Rechte Spalte */
+.settings-content {
+    width: 85%; /* Entspricht dem Restplatz neben der schmaleren Leiste */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Update-Seite Styling */
+.update-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.update-section {
+    background-color: #1f1f1f;
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid #333333;
+}
+
+.update-section h2 {
+    margin: 0 0 20px;
+}
+
+.update-options {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.update-options button {
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.update-options button:hover {
+    background-color: #0056b3;
+}
+
+.auto-update {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.auto-update input {
+    width: 60px;
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    background-color: #2a2a2a;
+    color: #ffffff;
+}
+
+.auto-update button {
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.auto-update button:hover {
+    background-color: #1e7e34;
+}

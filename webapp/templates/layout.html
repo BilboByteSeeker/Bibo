@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raspberry Pi Robo Test</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/script.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1><a href="/home" class="header-link">Raspberry Pi Robo Test</a></h1>
+        <div class="status">
+            <img id="status-icon" src="/static/network-offline.png" alt="Network Status" width="24" height="24">
+            <div class="dropdown">
+                <img src="/static/shutdown-icon.png" alt="Shutdown" id="shutdown-icon">
+                <div class="dropdown-content">
+                    <a href="#" onclick="shutdown()">Shutdown</a>
+                    <a href="#" onclick="reboot()">Reboot</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav>
+        <a href="/home" class="nav-link">Home</a>
+        <a href="/controls" class="nav-link">Controls</a>
+        <a href="/settings" class="nav-link">Settings</a>
+    </nav>
+    <main id="content">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
