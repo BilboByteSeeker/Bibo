@@ -6,13 +6,21 @@
         <h2>System Update</h2>
         <div class="update-options">
             <button onclick="checkSystemUpdates()">Auf Updates prüfen</button>
+            <span id="system-update-status" class="update-status"></span>
             <button onclick="installSystemUpdates()">Updates installieren</button>
         </div>
         <div class="auto-update">
-            <label for="system-auto-update">Automatische Updates alle</label>
-            <input type="number" id="system-auto-update" value="60" min="1" max="1440" step="1">
-            <span>Minuten</span>
-            <button onclick="setSystemAutoUpdate()">Speichern</button>
+            <label class="switch">
+                <input type="checkbox" id="system-auto-update-toggle">
+                <span class="slider"></span>
+            </label>
+            <span>Automatische Updates</span>
+            <div id="system-auto-update-settings" class="hidden">
+                <label for="system-auto-update-interval">Intervall:</label>
+                <input type="number" id="system-auto-update-interval" value="60" min="1" max="1440" step="1">
+                <span>Minuten</span>
+                <button onclick="setSystemAutoUpdate()">Speichern</button>
+            </div>
         </div>
     </section>
 
@@ -21,13 +29,21 @@
         <h2>Repository Update</h2>
         <div class="update-options">
             <button onclick="checkRepoUpdates()">Auf Updates prüfen</button>
+            <span id="repo-update-status" class="update-status"></span>
             <button onclick="installRepoUpdates()">Updates installieren</button>
         </div>
         <div class="auto-update">
-            <label for="repo-auto-update">Automatische Updates alle</label>
-            <input type="number" id="repo-auto-update" value="60" min="1" max="1440" step="1">
-            <span>Minuten</span>
-            <button onclick="setRepoAutoUpdate()">Speichern</button>
+            <label class="switch">
+                <input type="checkbox" id="repo-auto-update-toggle">
+                <span class="slider"></span>
+            </label>
+            <span>Automatische Updates</span>
+            <div id="repo-auto-update-settings" class="hidden">
+                <label for="repo-auto-update-interval">Intervall:</label>
+                <input type="number" id="repo-auto-update-interval" value="60" min="1" max="1440" step="1">
+                <span>Minuten</span>
+                <button onclick="setRepoAutoUpdate()">Speichern</button>
+            </div>
         </div>
     </section>
 </div>

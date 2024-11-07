@@ -56,6 +56,10 @@ server {{
         nginx_conf_file.write(nginx_conf_content)
     run_command(f"mv webapp_nginx.conf {nginx_conf_path}", use_sudo=True)
 
+    # Entferne die Standard-Nginx-Seite
+    if os.path.islink("/etc/nginx/sites-enabled/default"):
+        run_command("rm /etc/nginx/sites-enabled/default", use_sudo=True)
+
     # Symbolischen Link für Nginx erstellen und Nginx neu starten
     if os.path.islink("/etc/nginx/sites-enabled/webapp"):
         run_command("rm /etc/nginx/sites-enabled/webapp", use_sudo=True)
