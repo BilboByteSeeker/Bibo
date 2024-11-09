@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="settings-container">
-    <!-- Linke Navigationsleiste -->
+    <!-- Left sidebar -->
     <aside class="settings-sidebar">
         <ul>
             <li><a href="/settings/wifi" class="settings-link {% if 'wifi' in request.path %}active{% endif %}">WiFi</a></li>
@@ -10,10 +10,10 @@
         </ul>
     </aside>
 
-    <!-- Dynamischer Bereich -->
+    <!-- Dynamic section -->
     <section class="settings-content">
         {% block settings_content %}
-        <p>Wähle eine Option aus der linken Navigationsleiste aus.</p>
+        <p>Select an option from the left sidebar.</p>
         {% endblock %}
     </section>
 </div>

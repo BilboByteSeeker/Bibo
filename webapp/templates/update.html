@@ -4,15 +4,15 @@
     <section class="update-section">
         <h2>System Update</h2>
         <div id="update-status" class="update-status">
-            <!-- Statusmeldung -->
+            <!-- Status will be displayed here -->
         </div>
         <div class="update-options">
             <button id="check-updates-btn" onclick="checkSystemUpdates()" class="update-button">
-                <span class="button-text">Auf Updates prüfen</span>
+                <span class="button-text">Check for Updates</span>
                 <span class="loading-spinner hidden"></span>
             </button>
             <button id="install-updates-btn" onclick="installSystemUpdates()" class="update-button">
-                <span class="button-text">Updates installieren</span>
+                <span class="button-text">Install Updates</span>
                 <span class="loading-spinner hidden"></span>
             </button>
         </div>
@@ -21,13 +21,13 @@
                 <input type="checkbox" id="system-auto-update-toggle">
                 <span class="slider"></span>
             </label>
-            <span>Automatische Updates aktivieren</span>
+            <span>Enable automatic updates</span>
         </div>
         <div class="auto-update-interval">
-            <label for="system-auto-update-interval">Intervall:</label>
+            <label for="system-auto-update-interval">Interval:</label>
             <input type="number" id="system-auto-update-interval" value="720" min="1" max="1440" step="1">
-            <span>Minuten</span>
-            <button id="save-interval-btn" onclick="setSystemAutoUpdate()">Speichern</button>
+            <span>Minutes</span>
+            <button id="save-interval-btn" onclick="setSystemAutoUpdate()">Save</button>
         </div>
     </section>
 </div>

@@ -1,72 +1,63 @@
-// Automatische Überprüfung alle 12 Stunden
 document.addEventListener("DOMContentLoaded", () => {
-    checkSystemUpdates();
-    setInterval(checkSystemUpdates, 12 * 60 * 60 * 1000); // 12 Stunden in Millisekunden
+    updateNetworkStatus();
+    if (window.location.pathname.includes("/settings/update")) {
+        checkSystemUpdates();
+    }
+    setInterval(updateNetworkStatus, 10 * 1000); // Update network status every 10 seconds
 });
 
-// System Update Status anzeigen
-async function checkSystemUpdates() {
-    const checkButton = document.getElementById("check-updates-btn");
-    const statusElement = document.getElementById("update-status");
-    toggleButtonLoading(checkButton, true);
-
+// Update network status
+async function updateNetworkStatus() {
+    const statusIcon = document.getElementById("status-icon");
     try {
-        const response = await fetch("/check-system-updates");
+        const response = await fetch("/status");
         const data = await response.json();
-
-        if (data.updatesAvailable) {
-            statusElement.textContent = "Update verfügbar!";
-            statusElement.classList.add("available");
-            statusElement.classList.remove("unavailable");
+        if (data.status === "Online") {
+            statusIcon.src = "/static/network-online.png";
+            statusIcon.alt = "Network Online";
         } else {
-            statusElement.textContent = "Keine Updates verfügbar.";
-            statusElement.classList.add("unavailable");
-            statusElement.classList.remove("available");
+            statusIcon.src = "/static/network-offline.png";
+            statusIcon.alt = "Network Offline";
         }
     } catch (error) {
-        statusElement.textContent = "Fehler beim Prüfen der Updates.";
-        statusElement.classList.add("unavailable");
-    } finally {
-        toggleButtonLoading(checkButton, false);
+        statusIcon.src = "/static/network-offline.png";
+        statusIcon.alt = "Network Error";
     }
 }
 
-// System Update Installation
-async function installSystemUpdates() {
-    const installButton = document.getElementById("install-updates-btn");
-    toggleButtonLoading(installButton, true);
-
+// Shutdown functionality
+async function shutdown() {
     try {
-        const response = await fetch("/install-system-updates", { method: "POST" });
+        const response = await fetch("/shutdown", { method: "POST" });
         const data = await response.json();
-        alert(data.message);
+
+        if (response.ok) {
+            alert(data.message);
+        } else {
+            alert(`Error: ${data.error}`);
+        }
     } catch (error) {
-        alert("Fehler beim Installieren der Updates.");
-    } finally {
-        toggleButtonLoading(installButton, false);
+        alert("Error while shutting down the system.");
     }
 }
 
-// Automatische Updates einrichten
-function setSystemAutoUpdate() {
-    const interval = document.getElementById("system-auto-update-interval").value;
-    const enabled = document.getElementById("system-auto-update-toggle").checked;
+// Reboot functionality
+async function reboot() {
+    try {
+        const response = await fetch("/reboot", { method: "POST" });
+        const data = await response.json();
 
-    const saveButton = document.getElementById("save-interval-btn");
-    toggleButtonLoading(saveButton, true);
-
-    fetch("/set-system-auto-update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ interval: interval, enabled: enabled })
-    })
-        .then(response => response.json())
-        .then(data => alert(data.message))
-        .catch(error => alert("Fehler beim Speichern der automatischen Updates."))
-        .finally(() => toggleButtonLoading(saveButton, false));
+        if (response.ok) {
+            alert(data.message);
+        } else {
+            alert(`Error: ${data.error}`);
+        }
+    } catch (error) {
+        alert("Error while rebooting the system.");
+    }
 }
 
-// Hilfsfunktion: Button-Feedback
+// Toggle button loading animation
 function toggleButtonLoading(button, isLoading) {
     const textElement = button.querySelector(".button-text");
     const spinnerElement = button.querySelector(".loading-spinner");
