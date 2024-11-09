@@ -9,6 +9,17 @@ def run_command(command, use_sudo=False):
     print(f"Running: {command}")
     subprocess.run(command, shell=True, check=True)
 
+def set_permissions(user, webapp_dir):
+    """Set the correct permissions for the web application."""
+    # Set ownership for static files
+    static_dir = os.path.join(webapp_dir, "static")
+    run_command(f"chown -R www-data:www-data {static_dir}", use_sudo=True)
+    run_command(f"chmod -R 755 {static_dir}", use_sudo=True)
+
+    # Ensure the user's home directory is accessible
+    home_dir = os.path.dirname(webapp_dir)
+    run_command(f"chmod 755 {home_dir}", use_sudo=True)
+
 def main():
     # Get the user who started the script
     user = os.environ.get("SUDO_USER", getpass.getuser())
@@ -117,6 +128,9 @@ WantedBy=multi-user.target
         print(f"Updated REPO_PATH in {app_py_path}")
     else:
         print(f"app.py not found in {app_py_path}. Skipping update.")
+
+    # Set correct permissions
+    set_permissions(user, webapp_dir)
 
     print("Setup completed successfully!")
 
