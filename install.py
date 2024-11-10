@@ -16,6 +16,7 @@ def main():
 
     # Paths for the web application and `app.py`
     webapp_dir = f"{home_dir}/Bibo/webapp"
+    static_dir = f"{webapp_dir}/static"  # Static files directory
     app_py_path = f"{webapp_dir}/app.py"  
 
     # Update and install necessary packages
@@ -32,6 +33,17 @@ def main():
     # Install Flask and Gunicorn in the virtual environment
     run_command(f"{webapp_dir}/venv/bin/pip install flask gunicorn")
 
+    # Ensure static directory exists
+    if not os.path.exists(static_dir):
+        os.makedirs(static_dir)
+
+    # Set permissions for the `static` directory and parent directories
+    run_command(f"chown -R www-data:www-data {static_dir}", use_sudo=True)
+    run_command(f"chmod -R 755 {static_dir}", use_sudo=True)
+    run_command(f"chmod 755 {home_dir}", use_sudo=True)
+    run_command(f"chmod 755 {home_dir}/Bibo", use_sudo=True)
+    run_command(f"chmod 755 {webapp_dir}", use_sudo=True)
+
     # Create Nginx configuration file
     nginx_conf_path = "/etc/nginx/sites-available/webapp"
     nginx_conf_content = f"""
@@ -40,7 +52,7 @@ server {{
     server_name _;
 
     location /static/ {{
-        alias {webapp_dir}/static/;
+        alias {static_dir}/;
     }}
 
     location / {{
@@ -105,25 +117,6 @@ WantedBy=multi-user.target
         sudoers_file.write(visudo_content)
     run_command(f"mv webapp_sudoers {visudo_path}", use_sudo=True)
     run_command(f"chmod 0440 {visudo_path}", use_sudo=True)
-
-    # Update `app.py` if it exists
-    print(f"Checking for app.py at {app_py_path}...")
-    if os.path.exists(app_py_path):
-        print(f"Found app.py at {app_py_path}. Updating...")
-        with open(app_py_path, "r") as app_py_file:
-            lines = app_py_file.readlines()
-
-        # Replace the line with `REPO_PATH =`
-        with open(app_py_path, "w") as app_py_file:
-            for line in lines:
-                if line.strip().startswith("REPO_PATH ="):
-                    app_py_file.write(f'REPO_PATH = "{home_dir}/Bibo"\n')
-                else:
-                    app_py_file.write(line)
-
-        print(f"Updated REPO_PATH in {app_py_path}")
-    else:
-        print(f"app.py not found in {app_py_path}. Skipping update.")
 
     print("Setup completed successfully!")
 
