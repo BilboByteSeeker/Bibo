@@ -62,7 +62,7 @@ def check_system_updates():
             stderr=subprocess.PIPE,
             text=True
         )
-        total_lines = 20  # Approximation for update process
+        total_lines = 10  # Approximation for better progress calculation
         current_line = 0
         for line in iter(process.stdout.readline, ""):
             current_line += 1
@@ -83,7 +83,7 @@ def install_updates_stream():
             stderr=subprocess.PIPE,
             text=True
         )
-        total_lines = 50  # Approximation for upgrade process
+        total_lines = 100  # Approximation for better progress calculation
         current_line = 0
         for line in iter(process.stdout.readline, ""):
             current_line += 1
