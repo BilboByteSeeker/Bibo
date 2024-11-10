@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bibo</title>
     <link rel="stylesheet" href="/static/style.css">
-    <script src="/static/script.js" defer></script>
 </head>
 <body>
     <header>
-        <h1><a href="/home" class="header-link">Bibo</a></h1>
-        <div class="status">
-            <img id="status-icon" src="/static/network-offline.png" alt="Network Status" width="24" height="24">
+        <h1>Bibo</h1>
+        <div class="header-icons">
+            <img id="network-icon" src="/static/network-online.png" alt="Network Status">
             <div class="dropdown">
-                <img src="/static/shutdown-icon.png" alt="Shutdown" id="shutdown-icon">
+                <img id="shutdown-icon" src="/static/shutdown-icon.png" alt="Shutdown">
                 <div class="dropdown-content">
                     <a href="#" onclick="shutdown()">Shutdown</a>
                     <a href="#" onclick="reboot()">Reboot</a>
@@ -21,13 +20,25 @@
             </div>
         </div>
     </header>
-    <nav>
-        <a href="/home" class="nav-link">Home</a>
-        <a href="/controls" class="nav-link">Controls</a>
-        <a href="/settings" class="nav-link">Settings</a>
+    <nav class="tabs-container">
+        <a href="/home" class="tab-link {% if request.path == '/home' %}active{% endif %}">Home</a>
+        <a href="/controls" class="tab-link {% if request.path == '/controls' %}active{% endif %}">Controls</a>
+        <a href="/settings" class="tab-link {% if request.path.startswith('/settings') %}active{% endif %}">Settings</a>
     </nav>
-    <main id="content">
-        {% block content %}{% endblock %}
+    <main class="settings-container">
+        {% if request.path.startswith('/settings') %}
+        <aside class="settings-sidebar">
+            <ul>
+                <li><a href="/settings/update" class="settings-link {% if request.path == '/settings/update' %}active{% endif %}">Update</a></li>
+                <li><a href="/settings/wifi" class="settings-link {% if request.path == '/settings/wifi' %}active{% endif %}">WiFi</a></li>
+                <li><a href="/settings/bluetooth" class="settings-link {% if request.path == '/settings/bluetooth' %}active{% endif %}">Bluetooth</a></li>
+            </ul>
+        </aside>
+        {% endif %}
+        <section class="settings-content">
+            {% block settings_content %}{% endblock %}
+        </section>
     </main>
+    <script src="/static/script.js"></script>
 </body>
 </html>

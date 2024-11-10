@@ -1,8 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
     updateNetworkStatus();
-    if (window.location.pathname.includes("/settings/update")) {
-        checkSystemUpdates();
-    }
     setInterval(updateNetworkStatus, 10 * 1000); // Update network status every 10 seconds
 });
 
@@ -25,19 +22,49 @@ async function updateNetworkStatus() {
     }
 }
 
+// Check for system updates
+async function checkSystemUpdates() {
+    const button = document.getElementById("check-updates-btn");
+    const text = button.querySelector(".button-text");
+    const spinner = button.querySelector(".loading-spinner");
+
+    button.disabled = true;
+    text.classList.add("hidden");
+    spinner.classList.remove("hidden");
+
+    try {
+        const response = await fetch("/check-system-updates");
+        if (!response.ok) {
+            throw new Error("Failed to fetch updates");
+        }
+        const data = await response.json();
+
+        if (data.updatesAvailable) {
+            button.classList.add("available");
+            text.textContent = `Updates Available (${data.updatesCount})`;
+        } else {
+            button.classList.remove("available");
+            text.textContent = "No Updates";
+        }
+    } catch (error) {
+        button.classList.remove("available");
+        text.textContent = "Error checking updates";
+        console.error("Error:", error);
+    } finally {
+        spinner.classList.add("hidden");
+        text.classList.remove("hidden");
+        button.disabled = false;
+    }
+}
+
 // Shutdown functionality
 async function shutdown() {
     try {
         const response = await fetch("/shutdown", { method: "POST" });
         const data = await response.json();
-
-        if (response.ok) {
-            alert(data.message);
-        } else {
-            alert(`Error: ${data.error}`);
-        }
+        alert(data.message || "System shutting down.");
     } catch (error) {
-        alert("Error while shutting down the system.");
+        alert("Error while shutting down.");
     }
 }
 
@@ -46,29 +73,8 @@ async function reboot() {
     try {
         const response = await fetch("/reboot", { method: "POST" });
         const data = await response.json();
-
-        if (response.ok) {
-            alert(data.message);
-        } else {
-            alert(`Error: ${data.error}`);
-        }
+        alert(data.message || "System rebooting.");
     } catch (error) {
-        alert("Error while rebooting the system.");
-    }
-}
-
-// Toggle button loading animation
-function toggleButtonLoading(button, isLoading) {
-    const textElement = button.querySelector(".button-text");
-    const spinnerElement = button.querySelector(".loading-spinner");
-
-    if (isLoading) {
-        button.disabled = true;
-        textElement.classList.add("hidden");
-        spinnerElement.classList.remove("hidden");
-    } else {
-        button.disabled = false;
-        textElement.classList.remove("hidden");
-        spinnerElement.classList.add("hidden");
+        alert("Error while rebooting.");
     }
 }

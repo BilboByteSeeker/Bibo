@@ -1,10 +1,13 @@
-/* Allgemeines Styling */
+/* General Styling */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #121212;
     color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 /* Header Styling */
@@ -15,58 +18,62 @@ header {
     padding: 10px 20px;
     background-color: #1f1f1f;
     border-bottom: 2px solid #333333;
+    height: 50px; /* Fixed header height */
 }
 
 header h1 {
     margin: 0;
-    font-size: 24px;
+    font-size: 20px;
+    flex-grow: 1;
 }
 
-/* Styling für Header-Link */
-.header-link {
-    text-decoration: none;
-    color: inherit;
-}
-
-.header-link:hover {
-    text-decoration: underline;
-}
-
-.status {
+/* Header Icons Section */
+.header-icons {
     display: flex;
     align-items: center;
+    justify-content: flex-end; /* Ensure alignment to the right */
+    gap: 15px; /* Add spacing between icons */
 }
 
-.status img {
-    margin-right: 10px;
-    vertical-align: middle;
+#network-icon, #shutdown-icon {
+    height: 24px;
+    width: 24px;
+    cursor: pointer;
 }
 
-/* Navigation Styling */
-.nav-link {
+/* Tabs Navigation Bar */
+.tabs-container {
+    display: flex;
+    background-color: #1f1f1f;
+    border-bottom: 2px solid #333333;
+    height: 40px;
+}
+
+.tab-link {
     text-decoration: none;
-    padding: 10px 15px;
+    padding: 10px 20px;
     display: inline-block;
     color: #ffffff;
-    border-bottom: 2px solid transparent;
+    text-align: center;
     background-color: #1f1f1f;
+    border-right: 1px solid #333333;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.nav-link:hover, .nav-link.active {
-    border-bottom: 2px solid #007BFF;
-    color: #007BFF;
+.tab-link:hover {
+    background-color: #007BFF;
+    color: #ffffff;
 }
 
-/* Main Content */
-main {
-    padding: 20px;
+.tab-link.active {
+    background-color: #007BFF;
+    color: #ffffff;
+    font-weight: bold;
 }
 
-/* Dropdown Styling */
+/* Dropdown Menu Styling */
 .dropdown {
     position: relative;
-    display: inline-block;
 }
 
 .dropdown-content {
@@ -77,6 +84,7 @@ main {
     border: 1px solid #555555;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
+    min-width: 120px;
 }
 
 .dropdown-content a {
@@ -92,29 +100,23 @@ main {
     background-color: #444444;
 }
 
-#shutdown-icon {
-    cursor: pointer;
-}
-
 .dropdown:hover .dropdown-content {
     display: block;
 }
 
-/* Settings-Seite Styling */
+/* Sidebar Styling */
 .settings-container {
     display: flex;
+    flex: 1;
     flex-direction: row;
-    margin-top: 20px;
 }
 
-/* Linke Leiste */
 .settings-sidebar {
     width: 15%;
     background-color: #1f1f1f;
     border-right: 2px solid #333333;
     padding: 20px;
     box-sizing: border-box;
-    border-radius: 8px;
 }
 
 .settings-sidebar ul {
@@ -124,7 +126,7 @@ main {
 }
 
 .settings-sidebar li {
-    margin: 5px 0; /* Reduzierter Abstand zwischen den Einträgen */
+    margin: 10px 0;
 }
 
 .settings-link {
@@ -149,14 +151,14 @@ main {
     font-weight: bold;
 }
 
-/* Rechte Spalte */
+/* Main Content Section */
 .settings-content {
-    width: 85%;
+    flex: 1;
     padding: 20px;
     box-sizing: border-box;
 }
 
-/* Update-Seite Styling */
+/* Update Section */
 .update-container {
     display: flex;
     flex-direction: column;
@@ -178,31 +180,7 @@ main {
     text-align: center;
 }
 
-/* Update-Status */
-.update-status {
-    margin: 20px 0;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-}
-
-.update-status.available {
-    color: green;
-}
-
-.update-status.unavailable {
-    color: red;
-}
-
-/* Update-Buttons Abstand (untereinander) */
-.update-options {
-    display: flex;
-    flex-direction: column; /* Buttons untereinander */
-    gap: 15px; /* Abstand zwischen den Buttons */
-    align-items: center; /* Zentriert die Buttons */
-}
-
-/* Update-Buttons */
+/* Update Buttons */
 .update-button {
     position: relative;
     padding: 10px 15px;
@@ -229,7 +207,7 @@ main {
     cursor: not-allowed;
 }
 
-/* Lade-Symbol */
+/* Spinner */
 .loading-spinner {
     border: 3px solid #f3f3f3;
     border-top: 3px solid #007BFF;
@@ -248,54 +226,7 @@ main {
     }
 }
 
-/* Schiebeschalter (Switch) */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 34px;
-    height: 20px;
-    margin-right: 10px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 14px;
-    width: 14px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: #007BFF;
-}
-
-input:checked + .slider:before {
-    transform: translateX(14px);
-}
-
-/* Versteckte Elemente */
+/* Hidden Elements */
 .hidden {
     display: none;
 }

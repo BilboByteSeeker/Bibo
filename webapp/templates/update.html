@@ -11,23 +11,6 @@
                 <span class="button-text">Check for Updates</span>
                 <span class="loading-spinner hidden"></span>
             </button>
-            <button id="install-updates-btn" onclick="installSystemUpdates()" class="update-button">
-                <span class="button-text">Install Updates</span>
-                <span class="loading-spinner hidden"></span>
-            </button>
-        </div>
-        <div class="auto-update">
-            <label class="switch">
-                <input type="checkbox" id="system-auto-update-toggle">
-                <span class="slider"></span>
-            </label>
-            <span>Enable automatic updates</span>
-        </div>
-        <div class="auto-update-interval">
-            <label for="system-auto-update-interval">Interval:</label>
-            <input type="number" id="system-auto-update-interval" value="720" min="1" max="1440" step="1">
-            <span>Minutes</span>
-            <button id="save-interval-btn" onclick="setSystemAutoUpdate()">Save</button>
         </div>
     </section>
 </div>
