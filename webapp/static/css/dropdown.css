@@ -1,0 +1,30 @@
+/* Dropdown Menu Styling */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #333333;
+    border: 1px solid #555555;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #333333;
+}
+
+.dropdown-content a:hover {
+    background-color: #444444;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}

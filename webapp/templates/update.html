@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 {% block settings_content %}
+<!-- Import specific CSS for Update Page -->
+<link rel="stylesheet" href="/static/css/update.css">
 <div class="update-container">
     <section class="update-section">
         <h2>System Update</h2>
@@ -11,7 +13,17 @@
                 <span class="button-text">Check for Updates</span>
                 <span class="loading-spinner hidden"></span>
             </button>
+            <button id="install-updates-btn" onclick="installSystemUpdates()" class="update-button hidden">
+                <span class="button-text">Install Updates</span>
+                <span class="loading-spinner hidden"></span>
+            </button>
         </div>
+        <div class="progress-container hidden" id="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <button id="restart-btn" onclick="restartSystem()" class="update-button hidden">
+            Restart Required
+        </button>
     </section>
 </div>
 {% endblock %}

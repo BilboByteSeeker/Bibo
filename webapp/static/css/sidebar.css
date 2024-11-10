@@ -1,0 +1,46 @@
+/* Sidebar Styling */
+.settings-container {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+}
+
+.settings-sidebar {
+    width: 15%;
+    background-color: #1f1f1f;
+    border-right: 2px solid #333333;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.settings-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.settings-sidebar li {
+    margin: 10px 0;
+}
+
+.settings-link {
+    text-decoration: none;
+    color: #ffffff;
+    display: block;
+    padding: 10px 15px;
+    border-radius: 6px;
+    background-color: #333333;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
+}
+
+.settings-link:hover {
+    background-color: #007BFF;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.settings-link.active {
+    background-color: #007BFF;
+    color: #ffffff;
+    font-weight: bold;
+}

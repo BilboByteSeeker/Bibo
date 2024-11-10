@@ -1,0 +1,83 @@
+/* Update Section */
+.update-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    height: calc(100vh - 90px);
+    position: relative;
+    padding-top: 0;
+}
+
+.update-section {
+    background-color: #1f1f1f;
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid #333333;
+    width: 400px;
+    text-align: center;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -10%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Abstand zwischen den Elementen */
+    z-index: 10;
+}
+
+/* Progress Bar */
+.progress-container {
+    width: 100%;
+    height: 10px;
+    background-color: #333333;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    line-height: 10px;
+    font-size: 12px; /* Textgröße für Terminal-Ausgabe */
+    white-space: nowrap;
+    overflow: hidden;
+    transition: width 0.4s ease;
+}
+
+/* Update Buttons */
+.update-button {
+    position: relative;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    transition: background-color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 200px;
+}
+
+.update-button:hover {
+    background-color: #0056b3;
+}
+
+.update-button.updates-available {
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+}
+
+.update-button.hidden {
+    display: none;
+}

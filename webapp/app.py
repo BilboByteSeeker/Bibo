@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, redirect
+from flask import Flask, render_template, jsonify, request, redirect, Response
 import subprocess
 import os
 
@@ -55,28 +55,45 @@ def reboot():
 
 @app.route("/check-system-updates", methods=["GET"])
 def check_system_updates():
-    try:
-        update_result = subprocess.run(
-            ["sudo", "apt", "update"], check=True, capture_output=True, text=True
+    def generate():
+        process = subprocess.Popen(
+            ["sudo", "apt", "update"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
         )
-        print(f"APT Update Output:\n{update_result.stdout}")
+        total_lines = 20  # Approximation for update process
+        current_line = 0
+        for line in iter(process.stdout.readline, ""):
+            current_line += 1
+            progress = min(int((current_line / total_lines) * 100), 100)
+            yield f"data: {line.strip()}|{progress}\n\n"
+        process.stdout.close()
+        process.wait()
+        yield "data: CHECK_COMPLETE|100\n\n"
 
-        list_result = subprocess.check_output(
-            ["sudo", "apt", "list", "--upgradable"], text=True
+    return Response(generate(), content_type="text/event-stream")
+
+@app.route("/install-updates-stream", methods=["GET"])
+def install_updates_stream():
+    def generate():
+        process = subprocess.Popen(
+            ["sudo", "apt", "upgrade", "-y"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
         )
+        total_lines = 50  # Approximation for upgrade process
+        current_line = 0
+        for line in iter(process.stdout.readline, ""):
+            current_line += 1
+            progress = min(int((current_line / total_lines) * 100), 100)
+            yield f"data: {line.strip()}|{progress}\n\n"
+        process.stdout.close()
+        process.wait()
+        yield "data: INSTALLATION_COMPLETE|100\n\n"
 
-        # Zähle die Anzahl der verfügbaren Updates
-        updates_count = len([line for line in list_result.splitlines() if "upgradable" in line.lower()])
-        updates_available = updates_count > 0
-        print(f"APT List Output:\n{list_result}")
-
-        return jsonify({"updatesAvailable": updates_available, "updatesCount": updates_count, "message": list_result})
-    except subprocess.CalledProcessError as e:
-        print(f"Error during update check: {e.stderr}")
-        return jsonify({"error": f"Command failed: {e.stderr}"}), 500
-    except Exception as ex:
-        print(f"Unexpected error: {str(ex)}")
-        return jsonify({"error": f"Unexpected error: {str(ex)}"}), 500
+    return Response(generate(), content_type="text/event-stream")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)

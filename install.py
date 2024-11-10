@@ -48,6 +48,13 @@ server {{
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        # Streaming-Unterstützung
+        proxy_buffering off;
+        proxy_cache off;
+        chunked_transfer_encoding on;
+        proxy_http_version 1.1;
+        proxy_set_header Connection '';
     }}
 }}
 """
@@ -76,7 +83,7 @@ After=network.target
 User={user}
 Group=www-data
 WorkingDirectory={webapp_dir}
-ExecStart={webapp_dir}/venv/bin/gunicorn -w 4 -b 127.0.0.1:8000 --timeout 120 app:app
+ExecStart={webapp_dir}/venv/bin/gunicorn -w 4 -k gthread -b 127.0.0.1:8000 --timeout 0 app:app
 
 [Install]
 WantedBy=multi-user.target

@@ -1,0 +1,29 @@
+/* Tabs Navigation Bar */
+.tabs-container {
+    display: flex;
+    background-color: #1f1f1f;
+    border-bottom: 2px solid #333333;
+    height: 40px;
+}
+
+.tab-link {
+    text-decoration: none;
+    padding: 10px 20px;
+    display: inline-block;
+    color: #ffffff;
+    text-align: center;
+    background-color: #1f1f1f;
+    border-right: 1px solid #333333;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tab-link:hover {
+    background-color: #007BFF;
+    color: #ffffff;
+}
+
+.tab-link.active {
+    background-color: #007BFF;
+    color: #ffffff;
+    font-weight: bold;
+}
