@@ -125,21 +125,49 @@ def check_repo_updates():
 def update_repo():
     try:
         repo_path = os.path.expanduser("~/Bibo")
+        
         if not os.path.exists(repo_path):
             return jsonify({"error": "Repository not found"}), 404
 
-        process = subprocess.run(
+        # Check for uncommitted changes
+        status_process = subprocess.run(
+            ["git", "-C", repo_path, "status", "--porcelain"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+        if status_process.stdout.strip():
+            return jsonify({
+                "error": "Uncommitted changes detected",
+                "details": status_process.stdout.strip()
+            }), 400
+
+        # Pull the latest changes
+        pull_process = subprocess.run(
             ["git", "-C", repo_path, "pull"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
             check=True
         )
-        return jsonify({"message": "Repository updated successfully", "details": process.stdout}), 200
+
+        return jsonify({
+            "message": "Repository updated successfully",
+            "details": pull_process.stdout.strip()
+        }), 200
+
     except subprocess.CalledProcessError as e:
-        return jsonify({"error": f"Update failed: {e.stderr}"}), 500
+        return jsonify({
+            "error": "Update failed",
+            "details": e.stderr.strip()
+        }), 500
+
     except Exception as e:
-        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+        return jsonify({
+            "error": "Unexpected error",
+            "details": str(e)
+        }), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)

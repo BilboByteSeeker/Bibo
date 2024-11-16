@@ -39,34 +39,6 @@ function reboot() {
         });
 }
 
-function updateRepository() {
-    const updateButton = document.getElementById("update-repo-btn");
-    const spinner = updateButton.querySelector(".loading-spinner");
-    const buttonText = updateButton.querySelector(".button-text");
-
-    spinner.classList.remove("hidden");
-    buttonText.textContent = "Updating Repository...";
-
-    fetch("/update-repo", { method: "POST" })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error("Failed to update repository");
-            }
-        })
-        .then(data => {
-            buttonText.textContent = "Repository Updated";
-            console.log("Update Details:", data.details);
-            spinner.classList.add("hidden");
-        })
-        .catch(error => {
-            console.error("Error updating repository:", error);
-            buttonText.textContent = "Update Failed";
-            spinner.classList.add("hidden");
-        });
-}
-
 function checkRepoUpdates() {
     const checkButton = document.getElementById("check-repo-btn");
     const spinner = checkButton.querySelector(".loading-spinner");
@@ -117,4 +89,73 @@ function checkRepoUpdates() {
         buttonText.textContent = "Check Repository Updates";
         spinner.classList.add("hidden");
     };
+}
+
+function checkSystemUpdates() {
+    const checkButton = document.getElementById("check-updates-btn");
+    const spinner = checkButton.querySelector(".loading-spinner");
+    const buttonText = checkButton.querySelector(".button-text");
+    const progressBar = document.getElementById("progress-bar");
+    const progressContainer = document.getElementById("progress-container");
+    const progressText = document.getElementById("progress-text");
+
+    spinner.classList.remove("hidden");
+    buttonText.textContent = "Checking for Updates...";
+    progressBar.style.width = "0%";
+    progressText.textContent = "Starting...";
+    progressContainer.classList.remove("hidden");
+
+    const eventSource = new EventSource("/check-system-updates");
+
+    eventSource.onmessage = (event) => {
+        const [output, progress] = event.data.split("|");
+        const parsedProgress = parseInt(progress);
+        if (output === "CHECK_COMPLETE") {
+            eventSource.close();
+            buttonText.textContent = "No Updates Available (Check Again)";
+            progressBar.style.width = "100%";
+            progressText.textContent = "Check Complete";
+            spinner.classList.add("hidden");
+        } else if (!isNaN(parsedProgress)) {
+            progressBar.style.width = `${parsedProgress}%`;
+            progressText.textContent = output;
+        }
+    };
+
+    eventSource.onerror = () => {
+        eventSource.close();
+        progressText.textContent = "Error Checking Updates";
+        buttonText.textContent = "Check for Updates";
+        spinner.classList.add("hidden");
+    };
+}
+
+function updateRepository() {
+    const updateButton = document.getElementById("update-repo-btn");
+    const spinner = updateButton.querySelector(".loading-spinner");
+    const buttonText = updateButton.querySelector(".button-text");
+
+    spinner.classList.remove("hidden");
+    buttonText.textContent = "Updating Repository...";
+
+    fetch("/update-repo", { method: "POST" })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return response.json().then(data => {
+                    throw new Error(data.error || "Failed to update repository");
+                });
+            }
+        })
+        .then(data => {
+            buttonText.textContent = "Repository Updated";
+            console.log("Update Details:", data.details);
+            spinner.classList.add("hidden");
+        })
+        .catch(error => {
+            console.error("Error updating repository:", error);
+            buttonText.textContent = "Update Failed";
+            spinner.classList.add("hidden");
+        });
 }

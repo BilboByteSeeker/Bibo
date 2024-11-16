@@ -21,7 +21,7 @@ def main():
 
     # Update and install necessary packages
     run_command("apt update && apt upgrade -y", use_sudo=True)
-    run_command("apt install python3 python3-pip python3-venv nginx -y", use_sudo=True)
+    run_command("apt install python3 python3-pip python3-venv nginx git -y", use_sudo=True)
 
     # Set up the web application directory
     if not os.path.exists(webapp_dir):
@@ -37,12 +37,10 @@ def main():
     if not os.path.exists(static_dir):
         os.makedirs(static_dir)
 
-    # Set permissions for the `static` directory and parent directories
-    run_command(f"chown -R www-data:www-data {static_dir}", use_sudo=True)
-    run_command(f"chmod -R 755 {static_dir}", use_sudo=True)
-    run_command(f"chmod 755 {home_dir}", use_sudo=True)
-    run_command(f"chmod 755 {home_dir}/Bibo", use_sudo=True)
-    run_command(f"chmod 755 {webapp_dir}", use_sudo=True)
+    # Set permissions for the entire repository
+    repo_path = f"{home_dir}/Bibo"
+    run_command(f"chown -R www-data:www-data {repo_path}", use_sudo=True)
+    run_command(f"chmod -R 775 {repo_path}", use_sudo=True)
 
     # Create Nginx configuration file
     nginx_conf_path = "/etc/nginx/sites-available/webapp"
@@ -61,7 +59,7 @@ server {{
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
-        # Streaming-Unterstützung
+        # Streaming support
         proxy_buffering off;
         proxy_cache off;
         chunked_transfer_encoding on;
@@ -92,7 +90,7 @@ Description=Gunicorn instance to serve webapp
 After=network.target
 
 [Service]
-User={user}
+User=www-data
 Group=www-data
 WorkingDirectory={webapp_dir}
 ExecStart={webapp_dir}/venv/bin/gunicorn -w 4 -k gthread -b 127.0.0.1:8000 --timeout 0 app:app
@@ -110,8 +108,7 @@ WantedBy=multi-user.target
     # Update sudo permissions
     visudo_path = "/etc/sudoers.d/webapp"
     visudo_content = f"""
-{user} ALL=(ALL) NOPASSWD: /sbin/shutdown, /sbin/reboot
-{user} ALL=(ALL) NOPASSWD: /usr/bin/apt, /usr/bin/git
+www-data ALL=(ALL) NOPASSWD: /sbin/shutdown, /sbin/reboot, /usr/bin/git
 """
     with open("webapp_sudoers", "w") as sudoers_file:
         sudoers_file.write(visudo_content)
