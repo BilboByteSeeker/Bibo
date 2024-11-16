@@ -1,6 +1,25 @@
-{% extends "settings.html" %}
+{% extends "layout.html" %}
 {% block settings_content %}
-<h2>Bluetooth Einstellungen</h2>
-<p>Hier kannst du deine Bluetooth-Geräte konfigurieren.</p>
-<!-- Füge hier Bluetooth-spezifischen Inhalt hinzu -->
+<!-- Import specific CSS for Bluetooth Page -->
+<link rel="stylesheet" href="/static/css/update.css">
+
+<div class="update-page">
+    <div class="update-container">
+        <!-- Bluetooth Configuration Section -->
+        <section class="update-section">
+            <h2>Bluetooth Settings</h2>
+            <p>Manage your Bluetooth devices and configurations here.</p>
+            <div class="update-options">
+                <button id="bluetooth-scan-btn" onclick="scanBluetooth()" class="update-button">
+                    <span class="button-text">Scan for Devices</span>
+                    <span class="loading-spinner hidden"></span>
+                </button>
+                <button id="bluetooth-connect-btn" onclick="connectBluetooth()" class="update-button hidden">
+                    <span class="button-text">Connect to Device</span>
+                    <span class="loading-spinner hidden"></span>
+                </button>
+            </div>
+        </section>
+    </div>
+</div>
 {% endblock %}

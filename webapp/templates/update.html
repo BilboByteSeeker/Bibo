@@ -3,52 +3,54 @@
 <!-- Import specific CSS for Update Page -->
 <link rel="stylesheet" href="/static/css/update.css">
 
-<div class="update-container">
-    <section class="update-section">
-        <h2>Repository Update</h2>
-        <div id="repo-update-status" class="update-status">
-            <!-- Status will be displayed here -->
-        </div>
-        <div class="update-options">
-            <button id="check-repo-btn" onclick="checkRepoUpdates()" class="update-button">
-                <span class="button-text">Check Repository Updates</span>
-                <span class="loading-spinner hidden"></span>
-            </button>
-            <button id="update-repo-btn" onclick="updateRepository()" class="update-button hidden">
-                <span class="button-text">Update Repository</span>
-                <span class="loading-spinner hidden"></span>
-            </button>
-        </div>
-        <div class="progress-container hidden" id="repo-progress-container">
-            <div class="progress-bar" id="repo-progress-bar"></div>
-            <div id="repo-progress-text">0% - Starting...</div>
-        </div>
-    </section>
-</div>
+<div class="update-page">
+    <div class="update-container">
+        <!-- Repository Update Section -->
+        <section class="update-section">
+            <h2>Repository Update</h2>
+            <div id="repo-update-status" class="update-status">
+                <!-- Status will be displayed here -->
+            </div>
+            <div class="update-options">
+                <button id="check-repo-btn" onclick="checkRepoUpdates()" class="update-button">
+                    <span class="button-text">Check Repository Updates</span>
+                    <span class="loading-spinner hidden"></span>
+                </button>
+                <button id="update-repo-btn" onclick="updateRepository()" class="update-button hidden">
+                    <span class="button-text">Update Repository</span>
+                    <span class="loading-spinner hidden"></span>
+                </button>
+            </div>
+            <div class="progress-container hidden" id="repo-progress-container">
+                <div class="progress-bar" id="repo-progress-bar"></div>
+                <div id="repo-progress-text">0% - Starting...</div>
+            </div>
+        </section>
 
-<div class="update-container">
-    <section class="update-section">
-        <h2>System Update</h2>
-        <div id="update-status" class="update-status">
-            <!-- Status will be displayed here -->
-        </div>
-        <div class="update-options">
-            <button id="check-updates-btn" onclick="checkSystemUpdates()" class="update-button">
-                <span class="button-text">Check for Updates</span>
-                <span class="loading-spinner hidden"></span>
+        <!-- System Update Section -->
+        <section class="update-section">
+            <h2>System Update</h2>
+            <div id="update-status" class="update-status">
+                <!-- Status will be displayed here -->
+            </div>
+            <div class="update-options">
+                <button id="check-updates-btn" onclick="checkSystemUpdates()" class="update-button">
+                    <span class="button-text">Check for Updates</span>
+                    <span class="loading-spinner hidden"></span>
+                </button>
+                <button id="install-updates-btn" onclick="installSystemUpdates()" class="update-button hidden">
+                    <span class="button-text">Install Updates</span>
+                    <span class="loading-spinner hidden"></span>
+                </button>
+            </div>
+            <div class="progress-container hidden" id="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+                <div id="progress-text">0% - Starting...</div>
+            </div>
+            <button id="restart-btn" onclick="restartSystem()" class="update-button hidden">
+                Restart Required
             </button>
-            <button id="install-updates-btn" onclick="installSystemUpdates()" class="update-button hidden">
-                <span class="button-text">Install Updates</span>
-                <span class="loading-spinner hidden"></span>
-            </button>
-        </div>
-        <div class="progress-container hidden" id="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
-            <div id="progress-text">0% - Starting...</div>
-        </div>
-        <button id="restart-btn" onclick="restartSystem()" class="update-button hidden">
-            Restart Required
-        </button>
-    </section>
+        </section>
+    </div>
 </div>
 {% endblock %}

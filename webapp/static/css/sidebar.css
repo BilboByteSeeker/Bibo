@@ -6,11 +6,13 @@
 }
 
 .settings-sidebar {
-    width: 15%;
+    width: 250px; /* Standardize sidebar width */
+    min-width: 250px;
     background-color: #1f1f1f;
     border-right: 2px solid #333333;
     padding: 20px;
     box-sizing: border-box;
+    height: calc(100vh - 90px); /* Adjust height to match the header size */
 }
 
 .settings-sidebar ul {

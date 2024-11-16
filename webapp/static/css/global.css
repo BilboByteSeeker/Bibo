@@ -8,4 +8,69 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow: hidden; /* Prevent vertical scroll issues */
+}
+
+/* Header Styling */
+header {
+    width: 100%;
+    height: 90px; /* Uniform header height */
+    background-color: #1f1f1f;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #333333;
+}
+
+header h1 {
+    font-size: 24px;
+    margin: 0;
+    line-height: 90px; /* Ensures the header text aligns vertically */
+}
+
+/* Tabs Navigation */
+.tabs-container {
+    display: flex;
+    background-color: #1f1f1f;
+    height: 40px;
+    border-bottom: 1px solid #333333;
+}
+
+.tab-link {
+    text-decoration: none;
+    padding: 10px 20px;
+    display: inline-block;
+    color: #ffffff;
+    text-align: center;
+    background-color: #1f1f1f;
+    border-right: 1px solid #333333;
+    line-height: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tab-link:hover {
+    background-color: #007BFF;
+    color: #ffffff;
+}
+
+.tab-link.active {
+    background-color: #007BFF;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* Content Styling */
+.content {
+    flex-grow: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    height: calc(100vh - 130px); /* Adjust height based on header and tabs */
+    overflow-y: auto;
+}
+
+/* Ensure consistent box sizing */
+* {
+    box-sizing: border-box;
 }

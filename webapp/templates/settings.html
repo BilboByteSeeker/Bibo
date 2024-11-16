@@ -1,20 +1,15 @@
 {% extends "layout.html" %}
-{% block content %}
-<div class="settings-container">
-    <!-- Sidebar -->
-    <aside class="settings-sidebar">
-        <ul>
-            <li><a href="/settings/wifi" class="settings-link {% if 'wifi' in request.path %}active{% endif %}">WiFi</a></li>
-            <li><a href="/settings/update" class="settings-link {% if 'update' in request.path %}active{% endif %}">Update</a></li>
-            <li><a href="/settings/bluetooth" class="settings-link {% if 'bluetooth' in request.path %}active{% endif %}">Bluetooth</a></li>
-        </ul>
-    </aside>
+{% block settings_content %}
+<!-- Import specific CSS for Settings Page -->
+<link rel="stylesheet" href="/static/css/update.css">
 
-    <!-- Content -->
-    <section class="settings-content">
-        {% block settings_content %}
-        <p>Select an option from the left sidebar.</p>
-        {% endblock %}
-    </section>
+<div class="update-page">
+    <div class="update-container">
+        <!-- Content -->
+        <section class="update-section">
+            <h2>Settings Overview</h2>
+            <p>Select an option from the left sidebar to manage your settings.</p>
+        </section>
+    </div>
 </div>
 {% endblock %}

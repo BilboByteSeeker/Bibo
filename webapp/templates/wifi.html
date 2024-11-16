@@ -1,6 +1,25 @@
-{% extends "settings.html" %}
+{% extends "layout.html" %}
 {% block settings_content %}
-<h2>WiFi Einstellungen</h2>
-<p>Hier kannst du deine WLAN-Verbindung konfigurieren.</p>
-<!-- Füge hier WiFi-spezifischen Inhalt hinzu -->
+<!-- Import specific CSS for WiFi Page -->
+<link rel="stylesheet" href="/static/css/update.css">
+
+<div class="update-page">
+    <div class="update-container">
+        <!-- WiFi Configuration Section -->
+        <section class="update-section">
+            <h2>WiFi Settings</h2>
+            <p>Manage your WiFi connections and configurations here.</p>
+            <div class="update-options">
+                <button id="wifi-scan-btn" onclick="scanWiFi()" class="update-button">
+                    <span class="button-text">Scan for Networks</span>
+                    <span class="loading-spinner hidden"></span>
+                </button>
+                <button id="wifi-connect-btn" onclick="connectWiFi()" class="update-button hidden">
+                    <span class="button-text">Connect to Network</span>
+                    <span class="loading-spinner hidden"></span>
+                </button>
+            </div>
+        </section>
+    </div>
+</div>
 {% endblock %}
