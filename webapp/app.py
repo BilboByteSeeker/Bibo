@@ -135,9 +135,11 @@ def update_repo():
             text=True,
             check=True
         )
-        return jsonify({"message": "Repository updated", "details": process.stdout}), 200
+        return jsonify({"message": "Repository updated successfully", "details": process.stdout}), 200
     except subprocess.CalledProcessError as e:
         return jsonify({"error": f"Update failed: {e.stderr}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)

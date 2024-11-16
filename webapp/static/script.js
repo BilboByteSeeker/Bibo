@@ -39,91 +39,32 @@ function reboot() {
         });
 }
 
-function updateProgressBar(progressBar, progressContainer, spinner, progress, output) {
-    progressBar.style.width = `${progress}%`;
-    const progressText = document.getElementById("progress-text");
-    progressText.textContent = `${progress}% - ${output}`;
-    if (progress === 100) {
-        spinner.classList.add("hidden");
-    }
-}
-
-function checkSystemUpdates() {
-    const checkButton = document.getElementById("check-updates-btn");
-    const spinner = checkButton.querySelector(".loading-spinner");
-    const buttonText = checkButton.querySelector(".button-text");
-    const progressBar = document.getElementById("progress-bar");
-    const progressContainer = document.getElementById("progress-container");
-    const progressText = document.getElementById("progress-text");
+function updateRepository() {
+    const updateButton = document.getElementById("update-repo-btn");
+    const spinner = updateButton.querySelector(".loading-spinner");
+    const buttonText = updateButton.querySelector(".button-text");
 
     spinner.classList.remove("hidden");
-    buttonText.textContent = "Checking for Updates...";
-    progressBar.style.width = "0%";
-    progressText.textContent = "Starting...";
-    progressContainer.classList.remove("hidden");
+    buttonText.textContent = "Updating Repository...";
 
-    const eventSource = new EventSource("/check-system-updates");
-
-    eventSource.onmessage = (event) => {
-        const [output, progress] = event.data.split("|");
-        const parsedProgress = parseInt(progress);
-        if (output === "CHECK_COMPLETE") {
-            eventSource.close();
-            updateProgressBar(progressBar, progressContainer, spinner, 100, "Check Complete");
-            buttonText.textContent = "No Updates Available (Check Again)";
+    fetch("/update-repo", { method: "POST" })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to update repository");
+            }
+        })
+        .then(data => {
+            buttonText.textContent = "Repository Updated";
+            console.log("Update Details:", data.details);
             spinner.classList.add("hidden");
-            return;
-        }
-        if (!isNaN(parsedProgress)) {
-            updateProgressBar(progressBar, progressContainer, spinner, parsedProgress, output);
-        }
-    };
-
-    eventSource.onerror = () => {
-        eventSource.close();
-        progressText.textContent = "Error Checking Updates";
-        buttonText.textContent = "Check for Updates";
-        spinner.classList.add("hidden");
-    };
-}
-
-function installSystemUpdates() {
-    const installButton = document.getElementById("install-updates-btn");
-    const spinner = installButton.querySelector(".loading-spinner");
-    const buttonText = installButton.querySelector(".button-text");
-    const progressBar = document.getElementById("progress-bar");
-    const progressContainer = document.getElementById("progress-container");
-    const progressText = document.getElementById("progress-text");
-
-    spinner.classList.remove("hidden");
-    buttonText.textContent = "Installing Updates...";
-    progressBar.style.width = "0%";
-    progressText.textContent = "Starting...";
-    progressContainer.classList.remove("hidden");
-
-    const eventSource = new EventSource("/install-updates-stream");
-
-    eventSource.onmessage = (event) => {
-        const [output, progress] = event.data.split("|");
-        const parsedProgress = parseInt(progress);
-        if (output === "INSTALLATION_COMPLETE") {
-            eventSource.close();
-            updateProgressBar(progressBar, progressContainer, spinner, 100, "Installation Complete");
-            buttonText.textContent = "Installation Complete";
+        })
+        .catch(error => {
+            console.error("Error updating repository:", error);
+            buttonText.textContent = "Update Failed";
             spinner.classList.add("hidden");
-            return;
-        }
-        if (!isNaN(parsedProgress)) {
-            updateProgressBar(progressBar, progressContainer, spinner, parsedProgress, output);
-        }
-    };
-
-    eventSource.onerror = () => {
-        eventSource.close();
-        progressText.textContent = "Error Installing Updates";
-        buttonText.textContent = "Install Updates";
-        spinner.classList.add("hidden");
-    };
+        });
 }
 
 function checkRepoUpdates() {
@@ -176,31 +117,4 @@ function checkRepoUpdates() {
         buttonText.textContent = "Check Repository Updates";
         spinner.classList.add("hidden");
     };
-}
-
-function updateRepository() {
-    const updateButton = document.getElementById("update-repo-btn");
-    const spinner = updateButton.querySelector(".loading-spinner");
-    const buttonText = updateButton.querySelector(".button-text");
-
-    spinner.classList.remove("hidden");
-    buttonText.textContent = "Updating Repository...";
-
-    fetch("/update-repo", { method: "POST" })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error("Failed to update repository");
-            }
-        })
-        .then(data => {
-            buttonText.textContent = "Repository Updated";
-            spinner.classList.add("hidden");
-        })
-        .catch(error => {
-            console.error("Error updating repository:", error);
-            buttonText.textContent = "Update Failed";
-            spinner.classList.add("hidden");
-        });
 }
