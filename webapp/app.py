@@ -62,12 +62,8 @@ def check_system_updates():
             stderr=subprocess.PIPE,
             text=True
         )
-        total_lines = 10  # Approximation for better progress calculation
-        current_line = 0
         for line in iter(process.stdout.readline, ""):
-            current_line += 1
-            progress = min(int((current_line / total_lines) * 100), 100)
-            yield f"data: {line.strip()}|{progress}\n\n"
+            yield f"data: {line.strip()}|0\n\n"
         process.stdout.close()
         process.wait()
         yield "data: CHECK_COMPLETE|100\n\n"
@@ -83,17 +79,65 @@ def install_updates_stream():
             stderr=subprocess.PIPE,
             text=True
         )
-        total_lines = 100  # Approximation for better progress calculation
-        current_line = 0
         for line in iter(process.stdout.readline, ""):
-            current_line += 1
-            progress = min(int((current_line / total_lines) * 100), 100)
-            yield f"data: {line.strip()}|{progress}\n\n"
+            yield f"data: {line.strip()}|0\n\n"
         process.stdout.close()
         process.wait()
         yield "data: INSTALLATION_COMPLETE|100\n\n"
 
     return Response(generate(), content_type="text/event-stream")
+
+@app.route("/check-repo-updates", methods=["GET"])
+def check_repo_updates():
+    def generate():
+        repo_path = os.path.expanduser("~/Bibo")
+        if not os.path.exists(repo_path):
+            yield "data: ERROR|Repository not found\n\n"
+            return
+        try:
+            process = subprocess.Popen(
+                ["git", "-C", repo_path, "fetch"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            for line in iter(process.stdout.readline, ""):
+                yield f"data: {line.strip()}|0\n\n"
+            process.stdout.close()
+            process.wait()
+
+            updates_available = subprocess.run(
+                ["git", "-C", repo_path, "log", "HEAD..origin/main", "--oneline"],
+                stdout=subprocess.PIPE,
+                text=True
+            ).stdout.strip()
+
+            if updates_available:
+                yield "data: UPDATES_AVAILABLE|100\n\n"
+            else:
+                yield "data: NO_UPDATES|100\n\n"
+        except Exception as e:
+            yield f"data: ERROR|{str(e)}\n\n"
+
+    return Response(generate(), content_type="text/event-stream")
+
+@app.route("/update-repo", methods=["POST"])
+def update_repo():
+    try:
+        repo_path = os.path.expanduser("~/Bibo")
+        if not os.path.exists(repo_path):
+            return jsonify({"error": "Repository not found"}), 404
+
+        process = subprocess.run(
+            ["git", "-C", repo_path, "pull"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+        return jsonify({"message": "Repository updated", "details": process.stdout}), 200
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error": f"Update failed: {e.stderr}"}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)

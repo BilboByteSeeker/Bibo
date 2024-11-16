@@ -51,11 +51,13 @@ function updateProgressBar(progressBar, progressContainer, spinner, progress, ou
 function checkSystemUpdates() {
     const checkButton = document.getElementById("check-updates-btn");
     const spinner = checkButton.querySelector(".loading-spinner");
+    const buttonText = checkButton.querySelector(".button-text");
     const progressBar = document.getElementById("progress-bar");
     const progressContainer = document.getElementById("progress-container");
     const progressText = document.getElementById("progress-text");
 
     spinner.classList.remove("hidden");
+    buttonText.textContent = "Checking for Updates...";
     progressBar.style.width = "0%";
     progressText.textContent = "Starting...";
     progressContainer.classList.remove("hidden");
@@ -68,6 +70,8 @@ function checkSystemUpdates() {
         if (output === "CHECK_COMPLETE") {
             eventSource.close();
             updateProgressBar(progressBar, progressContainer, spinner, 100, "Check Complete");
+            buttonText.textContent = "No Updates Available (Check Again)";
+            spinner.classList.add("hidden");
             return;
         }
         if (!isNaN(parsedProgress)) {
@@ -78,6 +82,7 @@ function checkSystemUpdates() {
     eventSource.onerror = () => {
         eventSource.close();
         progressText.textContent = "Error Checking Updates";
+        buttonText.textContent = "Check for Updates";
         spinner.classList.add("hidden");
     };
 }
@@ -85,11 +90,13 @@ function checkSystemUpdates() {
 function installSystemUpdates() {
     const installButton = document.getElementById("install-updates-btn");
     const spinner = installButton.querySelector(".loading-spinner");
+    const buttonText = installButton.querySelector(".button-text");
     const progressBar = document.getElementById("progress-bar");
     const progressContainer = document.getElementById("progress-container");
     const progressText = document.getElementById("progress-text");
 
     spinner.classList.remove("hidden");
+    buttonText.textContent = "Installing Updates...";
     progressBar.style.width = "0%";
     progressText.textContent = "Starting...";
     progressContainer.classList.remove("hidden");
@@ -102,6 +109,8 @@ function installSystemUpdates() {
         if (output === "INSTALLATION_COMPLETE") {
             eventSource.close();
             updateProgressBar(progressBar, progressContainer, spinner, 100, "Installation Complete");
+            buttonText.textContent = "Installation Complete";
+            spinner.classList.add("hidden");
             return;
         }
         if (!isNaN(parsedProgress)) {
@@ -112,6 +121,86 @@ function installSystemUpdates() {
     eventSource.onerror = () => {
         eventSource.close();
         progressText.textContent = "Error Installing Updates";
+        buttonText.textContent = "Install Updates";
         spinner.classList.add("hidden");
     };
+}
+
+function checkRepoUpdates() {
+    const checkButton = document.getElementById("check-repo-btn");
+    const spinner = checkButton.querySelector(".loading-spinner");
+    const buttonText = checkButton.querySelector(".button-text");
+    const progressBar = document.getElementById("repo-progress-bar");
+    const progressContainer = document.getElementById("repo-progress-container");
+    const progressText = document.getElementById("repo-progress-text");
+    const updateRepoButton = document.getElementById("update-repo-btn");
+
+    spinner.classList.remove("hidden");
+    buttonText.textContent = "Checking Repository Updates...";
+    progressBar.style.width = "0%";
+    progressText.textContent = "Starting...";
+    progressContainer.classList.remove("hidden");
+
+    const eventSource = new EventSource("/check-repo-updates");
+
+    eventSource.onmessage = (event) => {
+        const [output, progress] = event.data.split("|");
+        const parsedProgress = parseInt(progress);
+        if (output === "UPDATES_AVAILABLE") {
+            eventSource.close();
+            buttonText.textContent = "Updates Available";
+            updateRepoButton.classList.remove("hidden");
+            progressBar.style.width = "100%";
+            progressText.textContent = "Updates Available";
+            spinner.classList.add("hidden");
+        } else if (output === "NO_UPDATES") {
+            eventSource.close();
+            buttonText.textContent = "No Updates Available";
+            progressBar.style.width = "100%";
+            progressText.textContent = "No Updates Available";
+            spinner.classList.add("hidden");
+        } else if (output === "ERROR") {
+            eventSource.close();
+            buttonText.textContent = "Error Checking Updates";
+            progressText.textContent = "Error";
+            spinner.classList.add("hidden");
+        } else if (!isNaN(parsedProgress)) {
+            progressBar.style.width = `${parsedProgress}%`;
+            progressText.textContent = output;
+        }
+    };
+
+    eventSource.onerror = () => {
+        eventSource.close();
+        progressText.textContent = "Error Checking Updates";
+        buttonText.textContent = "Check Repository Updates";
+        spinner.classList.add("hidden");
+    };
+}
+
+function updateRepository() {
+    const updateButton = document.getElementById("update-repo-btn");
+    const spinner = updateButton.querySelector(".loading-spinner");
+    const buttonText = updateButton.querySelector(".button-text");
+
+    spinner.classList.remove("hidden");
+    buttonText.textContent = "Updating Repository...";
+
+    fetch("/update-repo", { method: "POST" })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to update repository");
+            }
+        })
+        .then(data => {
+            buttonText.textContent = "Repository Updated";
+            spinner.classList.add("hidden");
+        })
+        .catch(error => {
+            console.error("Error updating repository:", error);
+            buttonText.textContent = "Update Failed";
+            spinner.classList.add("hidden");
+        });
 }
