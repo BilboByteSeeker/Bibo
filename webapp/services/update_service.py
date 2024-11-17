@@ -25,55 +25,27 @@ def configure_git_identity_and_strategy(repo_path):
             stderr=subprocess.PIPE,
             text=True
         )
-        print("Git identity and pull strategy configured successfully.")  # Debug log
+        print("Git identity and pull strategy configured successfully.")
     except subprocess.CalledProcessError as e:
-        print(f"Error configuring Git identity or strategy: {e.stderr}")  # Debug log
-
-def check_system_updates():
-    """Stream the output of checking system updates."""
-    process = subprocess.Popen(
-        ["sudo", "apt", "update"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
-    for line in iter(process.stdout.readline, ""):
-        yield line
-    process.stdout.close()
-    process.wait()
-
-def install_system_updates():
-    """Stream the output of installing system updates."""
-    process = subprocess.Popen(
-        ["sudo", "apt", "upgrade", "-y"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
-    for line in iter(process.stdout.readline, ""):
-        yield line
-    process.stdout.close()
-    process.wait()
+        print(f"Error configuring Git identity or strategy: {e.stderr}")
 
 def check_repo_updates():
     """Check for repository updates."""
     repo_path = "/home/bilbo/Bibo"
-    print(f"Checking repository at {repo_path}")  # Debug log
+    print(f"Checking repository at {repo_path}")
 
     if not os.path.exists(repo_path):
         error_message = f"Repository not found at {repo_path}"
-        print(error_message)  # Debug log
+        print(error_message)
         return {"status": "error", "message": error_message}
 
     try:
-        print("Running git fetch...")  # Debug log
         subprocess.run(
             ["git", "-C", repo_path, "fetch"],
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
-        print("Running git log...")  # Debug log
         log_process = subprocess.run(
             ["git", "-C", repo_path, "log", "HEAD..origin/main", "--oneline"],
             stdout=subprocess.PIPE,
@@ -83,18 +55,16 @@ def check_repo_updates():
         updates = log_process.stdout.strip()
 
         if updates:
-            print("Updates available")  # Debug log
             return {"status": "updates_available", "details": updates}
         else:
-            print("No updates available")  # Debug log
             return {"status": "no_updates"}
     except subprocess.CalledProcessError as e:
         error_message = e.stderr if hasattr(e, "stderr") else str(e)
-        print(f"Git error: {error_message}")  # Debug log
+        print(f"Git error: {error_message}")
         return {"status": "error", "message": f"Git error: {error_message}"}
     except Exception as e:
         error_message = f"Unexpected error: {str(e)}"
-        print(error_message)  # Debug log
+        print(error_message)
         return {"status": "error", "message": error_message}
 
 def update_repository():
@@ -105,11 +75,11 @@ def update_repository():
 
     try:
         # Configure Git identity and pull strategy
-        print("Configuring Git identity and pull strategy...")  # Debug log
+        print("Configuring Git identity and pull strategy...")
         configure_git_identity_and_strategy(repo_path)
 
         # Check for uncommitted changes
-        print("Checking for uncommitted changes...")  # Debug log
+        print("Checking for uncommitted changes...")
         status_process = subprocess.run(
             ["git", "-C", repo_path, "status", "--porcelain"],
             stdout=subprocess.PIPE,
@@ -119,7 +89,7 @@ def update_repository():
         uncommitted_changes = status_process.stdout.strip()
 
         if uncommitted_changes:
-            print("Uncommitted changes detected. Committing changes...")  # Debug log
+            print("Uncommitted changes detected. Committing changes...")
             subprocess.run(
                 ["git", "-C", repo_path, "add", "."],
                 check=True,
@@ -135,8 +105,19 @@ def update_repository():
                 text=True
             )
 
+        # Fetch updates before pulling
+        print("Fetching updates...")
+        fetch_process = subprocess.run(
+            ["git", "-C", repo_path, "fetch"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        print(f"Fetch output: {fetch_process.stdout}")
+
         # Perform the pull
-        print("Performing git pull...")  # Debug log
+        print("Performing git pull...")
         pull_process = subprocess.run(
             ["git", "-C", repo_path, "pull"],
             check=True,
@@ -144,8 +125,17 @@ def update_repository():
             stderr=subprocess.PIPE,
             text=True
         )
-        print(f"Git pull output: {pull_process.stdout}")  # Debug log
+        print(f"Git pull output: {pull_process.stdout}")
 
+        # Double-check repository status
+        status_check = subprocess.run(
+            ["git", "-C", repo_path, "status"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        if "up to date" in status_check.stdout:
+            print("Repository is already up to date.")
         return {
             "status": "success",
             "message": "Repository updated successfully",
