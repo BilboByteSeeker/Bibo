@@ -1,6 +1,5 @@
 import subprocess
 import os
-
 def configure_git_identity_and_strategy(repo_path):
     """Ensure Git identity and pull strategy are configured for commits."""
     try:
