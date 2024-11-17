@@ -175,4 +175,4 @@ def update_repository():
     except Exception as e:
         error_message = f"Unexpected error: {str(e)}"
         print(f"Unexpected error: {error_message}")
-        return {"status": "error", "message": error_message"}
+        return {"status": "error", "message": error_message}
