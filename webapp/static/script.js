@@ -91,6 +91,38 @@ function checkRepoUpdates() {
     };
 }
 
+function updateRepository() {
+    const updateButton = document.getElementById("update-repo-btn");
+    const spinner = updateButton.querySelector(".loading-spinner");
+    const buttonText = updateButton.querySelector(".button-text");
+
+    spinner.classList.remove("hidden");
+    buttonText.textContent = "Updating Repository...";
+
+    fetch("/system/update-repo", { method: "POST" })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return response.json().then(data => {
+                    throw new Error(data.error || "Failed to update repository");
+                });
+            }
+        })
+        .then(data => {
+            buttonText.textContent = "Repository Updated";
+            console.log("Update Details:", data.details);
+            spinner.classList.add("hidden");
+            // Add reminder to restart webapp
+            alert("Repository updated successfully. Don't forget to restart the Webapp for changes to take effect!");
+        })
+        .catch(error => {
+            console.error("Error updating repository:", error);
+            buttonText.textContent = "Update Failed";
+            spinner.classList.add("hidden");
+        });
+}
+
 function checkSystemUpdates() {
     const checkButton = document.getElementById("check-updates-btn");
     const spinner = checkButton.querySelector(".loading-spinner");
@@ -128,36 +160,6 @@ function checkSystemUpdates() {
         buttonText.textContent = "Check for Updates";
         spinner.classList.add("hidden");
     };
-}
-
-function updateRepository() {
-    const updateButton = document.getElementById("update-repo-btn");
-    const spinner = updateButton.querySelector(".loading-spinner");
-    const buttonText = updateButton.querySelector(".button-text");
-
-    spinner.classList.remove("hidden");
-    buttonText.textContent = "Updating Repository...";
-
-    fetch("/system/update-repo", { method: "POST" })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                return response.json().then(data => {
-                    throw new Error(data.error || "Failed to update repository");
-                });
-            }
-        })
-        .then(data => {
-            buttonText.textContent = "Repository Updated";
-            console.log("Update Details:", data.details);
-            spinner.classList.add("hidden");
-        })
-        .catch(error => {
-            console.error("Error updating repository:", error);
-            buttonText.textContent = "Update Failed";
-            spinner.classList.add("hidden");
-        });
 }
 
 function restartWebapp() {
