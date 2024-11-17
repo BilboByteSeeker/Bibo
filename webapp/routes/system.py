@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, Response
 from services.system_actions import shutdown_system, reboot_system
 from services.update_service import check_system_updates, install_system_updates, check_repo_updates, update_repository
+import subprocess
+import threading
 
 system_bp = Blueprint("system", __name__)
 
@@ -58,3 +60,18 @@ def update_repo_route():
     if result["status"] == "error":
         return jsonify({"error": result["message"]}), 500
     return jsonify(result), 200
+
+@system_bp.route("/restart-webapp", methods=["POST"])
+def restart_webapp():
+    def restart():
+        try:
+            subprocess.run(["sudo", "systemctl", "restart", "webapp"], check=True)
+        except subprocess.CalledProcessError as e:
+            # Log the error if the restart fails
+            print(f"Failed to restart webapp: {e.stderr.strip()}")
+
+    # Trigger the restart in a separate thread
+    threading.Thread(target=restart).start()
+
+    # Return success message immediately
+    return jsonify({"message": "Webapp is restarting. This may take a few seconds."}), 200

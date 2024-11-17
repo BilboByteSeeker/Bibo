@@ -159,3 +159,31 @@ function updateRepository() {
             spinner.classList.add("hidden");
         });
 }
+
+function restartWebapp() {
+    const restartButton = document.getElementById("restart-webapp-btn");
+    const spinner = restartButton.querySelector(".loading-spinner");
+    const buttonText = restartButton.querySelector(".button-text");
+
+    spinner.classList.remove("hidden");
+    buttonText.textContent = "Restarting Webapp...";
+
+    fetch("/system/restart-webapp", { method: "POST" })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to restart webapp.");
+            }
+        })
+        .then(data => {
+            buttonText.textContent = "Webapp Restarted";
+            spinner.classList.add("hidden");
+            alert(data.message);
+        })
+        .catch(error => {
+            console.error("Error restarting webapp:", error);
+            buttonText.textContent = "Restart Failed";
+            spinner.classList.add("hidden");
+        });
+}
