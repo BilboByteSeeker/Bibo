@@ -132,8 +132,8 @@ After=network.target
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=/home/bilbo/Bibo/webapp
-ExecStart=/home/bilbo/Bibo/webapp/venv/bin/gunicorn -w 4 -k gthread -b 127.0.0.1:8000 --timeout 0 "app:create_app()"
+WorkingDirectory={webapp_dir}
+ExecStart={webapp_dir}/venv/bin/gunicorn -w 4 -k gthread -b 127.0.0.1:8000 --timeout 0 "app:create_app()"
 
 [Install]
 WantedBy=multi-user.target
@@ -156,11 +156,11 @@ www-data ALL=(ALL) NOPASSWD: ALL
     run_command(f"chmod 0440 {visudo_path}", use_sudo=True)
 
     # Configure Git for www-data
-    run_command("sudo git config --global --add safe.directory /home/bilbo/Bibo", use_sudo=True)
-    run_command("sudo chown -R www-data:www-data /home/bilbo/Bibo", use_sudo=True)
-    run_command("sudo chmod -R 755 /home/bilbo/Bibo", use_sudo=True)
-    run_command("sudo -u www-data git -C /home/bilbo/Bibo config user.email 'robot@example.com'", use_sudo=True)
-    run_command("sudo -u www-data git -C /home/bilbo/Bibo config user.name 'Robot System'", use_sudo=True)
+    run_command(f"git config --global --add safe.directory {home_dir}/Bibo", use_sudo=True)
+    run_command(f"chown -R www-data:www-data {home_dir}/Bibo", use_sudo=True)
+    run_command(f"chmod -R 755 {home_dir}/Bibo", use_sudo=True)
+    run_command(f"sudo -u www-data git -C {home_dir}/Bibo config user.email 'robot@example.com'", use_sudo=True)
+    run_command(f"sudo -u www-data git -C {home_dir}/Bibo config user.name 'Robot System'", use_sudo=True)
 
     print("Setup completed successfully!")
 
