@@ -70,13 +70,14 @@ def check_repo_updates():
         return {"status": "error", "message": error_message}
 
 def update_repository():
-    """Update the repository."""
+    """Update the repository by committing local changes before pulling."""
     repo_path = "/home/bilbo/Bibo"
     if not os.path.exists(repo_path):
         return {"status": "error", "message": "Repository not found"}
-    
+
     try:
         # Check for uncommitted changes
+        print("Checking for uncommitted changes...")  # Debug log
         status_process = subprocess.run(
             ["git", "-C", repo_path, "status", "--porcelain"],
             stdout=subprocess.PIPE,
@@ -86,12 +87,16 @@ def update_repository():
         uncommitted_changes = status_process.stdout.strip()
 
         if uncommitted_changes:
-            return {
-                "status": "error",
-                "message": "Repository has uncommitted changes. Please commit or stash them before updating."
-            }
-        
+            print("Uncommitted changes detected. Committing changes...")  # Debug log
+            subprocess.run(["git", "-C", repo_path, "add", "."], check=True)
+            subprocess.run(
+                ["git", "-C", repo_path, "commit", "-m", "Auto-commit local changes before pull"],
+                check=True
+            )
+            print("Local changes committed successfully.")  # Debug log
+
         # Perform the pull
+        print("Performing git pull...")  # Debug log
         pull_process = subprocess.run(
             ["git", "-C", repo_path, "pull"],
             check=True,
@@ -99,15 +104,18 @@ def update_repository():
             stderr=subprocess.PIPE,
             text=True
         )
+        print(f"Git pull output: {pull_process.stdout}")  # Debug log
+
         return {
             "status": "success",
             "message": "Repository updated successfully",
             "details": pull_process.stdout
         }
-    
     except subprocess.CalledProcessError as e:
         error_message = e.stderr if hasattr(e, "stderr") else str(e)
+        print(f"Git error: {error_message}")
         return {"status": "error", "message": f"Git error: {error_message}"}
     except Exception as e:
-        return {"status": "error", "message": f"Unexpected error: {str(e)}"}
-
+        error_message = f"Unexpected error: {str(e)}"
+        print(f"Unexpected error: {error_message}")
+        return {"status": "error", "message": error_message}
