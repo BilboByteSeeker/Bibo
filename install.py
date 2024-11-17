@@ -1,4 +1,3 @@
-##
 import os
 import getpass
 import subprocess
@@ -18,25 +17,24 @@ def main():
     # Paths for the web application and `app.py`
     webapp_dir = f"{home_dir}/Bibo/webapp"
     static_dir = f"{webapp_dir}/static"  # Static files directory
-    app_py_path = f"{webapp_dir}/app.py"  
+    templates_dir = f"{webapp_dir}/templates"
+    routes_dir = f"{webapp_dir}/routes"
+    services_dir = f"{webapp_dir}/services"
 
     # Update and install necessary packages
     run_command("apt update && apt upgrade -y", use_sudo=True)
     run_command("apt install python3 python3-pip python3-venv nginx git -y", use_sudo=True)
 
     # Set up the web application directory
-    if not os.path.exists(webapp_dir):
-        os.makedirs(webapp_dir)
+    for directory in [webapp_dir, static_dir, templates_dir, routes_dir, services_dir]:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
     # Create a virtual environment
     run_command(f"python3 -m venv {webapp_dir}/venv")
 
     # Install Flask and Gunicorn in the virtual environment
     run_command(f"{webapp_dir}/venv/bin/pip install flask gunicorn")
-
-    # Ensure static directory exists
-    if not os.path.exists(static_dir):
-        os.makedirs(static_dir)
 
     # Set permissions for the entire repository
     repo_path = f"{home_dir}/Bibo"
@@ -102,7 +100,7 @@ WantedBy=multi-user.target
     with open("webapp.service", "w") as service_file:
         service_file.write(systemd_service_content)
     run_command(f"mv webapp.service {systemd_service_path}", use_sudo=True)
-    run_command("systemctl daemon-reload", use_sudo=True)  
+    run_command("systemctl daemon-reload", use_sudo=True)
     run_command("systemctl start webapp", use_sudo=True)
     run_command("systemctl enable webapp", use_sudo=True)
 
