@@ -49,6 +49,19 @@ def update_repo_path_in_service_file(home_dir):
     except Exception as e:
         print(f"Error updating repo_path in service file: {e}")
 
+def configure_git(home_dir):
+    """Configure Git for the www-data user in the specified repository."""
+    repo_path = f"{home_dir}/Bibo"
+    if os.path.exists(os.path.join(repo_path, ".git")):
+        print(f"Configuring Git in {repo_path}...")
+        run_command(f"git config --global --add safe.directory {repo_path}", use_sudo=True)
+        run_command(f"chown -R www-data:www-data {repo_path}", use_sudo=True)
+        run_command(f"chmod -R 755 {repo_path}", use_sudo=True)
+        run_command(f"sudo -u www-data git -C {repo_path} config user.email 'robot@example.com'", use_sudo=True)
+        run_command(f"sudo -u www-data git -C {repo_path} config user.name 'Robot System'", use_sudo=True)
+    else:
+        print(f"Directory {repo_path} is not a Git repository. Skipping Git configuration.")
+
 def main():
     # Get the user who started the script
     user = os.environ.get("SUDO_USER", getpass.getuser())
@@ -156,11 +169,7 @@ www-data ALL=(ALL) NOPASSWD: ALL
     run_command(f"chmod 0440 {visudo_path}", use_sudo=True)
 
     # Configure Git for www-data
-    run_command(f"git config --global --add safe.directory {home_dir}/Bibo", use_sudo=True)
-    run_command(f"chown -R www-data:www-data {home_dir}/Bibo", use_sudo=True)
-    run_command(f"chmod -R 755 {home_dir}/Bibo", use_sudo=True)
-    run_command(f"sudo -u www-data git -C {home_dir}/Bibo config user.email 'robot@example.com'", use_sudo=True)
-    run_command(f"sudo -u www-data git -C {home_dir}/Bibo config user.name 'Robot System'", use_sudo=True)
+    configure_git(home_dir)
 
     print("Setup completed successfully!")
 
