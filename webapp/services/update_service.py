@@ -1,9 +1,9 @@
 import subprocess
 import os
+
 def configure_git_identity_and_strategy(repo_path):
     """Ensure Git identity and pull strategy are configured for commits."""
     try:
-        # Configure user identity
         subprocess.run(
             ["git", "-C", repo_path, "config", "user.email", "robot@example.com"],
             check=True,
@@ -18,7 +18,6 @@ def configure_git_identity_and_strategy(repo_path):
             stderr=subprocess.PIPE,
             text=True
         )
-        # Configure pull strategy (merge by default)
         subprocess.run(
             ["git", "-C", repo_path, "config", "pull.rebase", "false"],
             check=True,
@@ -121,23 +120,20 @@ def update_repository():
 
         if uncommitted_changes:
             print("Uncommitted changes detected. Committing changes...")  # Debug log
-            commit_process = subprocess.run(
+            subprocess.run(
                 ["git", "-C", repo_path, "add", "."],
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True
             )
-            print(f"Git add output: {commit_process.stdout}")  # Debug log
-
-            commit_process = subprocess.run(
+            subprocess.run(
                 ["git", "-C", repo_path, "commit", "-m", "Auto-commit local changes before pull"],
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True
             )
-            print(f"Git commit output: {commit_process.stdout}")  # Debug log
 
         # Perform the pull
         print("Performing git pull...")  # Debug log
@@ -155,6 +151,7 @@ def update_repository():
             "message": "Repository updated successfully",
             "details": pull_process.stdout
         }
+
     except subprocess.CalledProcessError as e:
         error_message = e.stderr if hasattr(e, "stderr") else str(e)
         print(f"Git error: {error_message}")
