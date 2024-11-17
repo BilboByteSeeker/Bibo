@@ -38,10 +38,19 @@ def install_system_updates_route():
 
 @system_bp.route("/check-repo-updates", methods=["GET"])
 def check_repo_updates_route():
-    result = check_repo_updates()
-    if result["status"] == "error":
-        return jsonify({"error": result["message"]}), 500
-    return jsonify(result), 200
+    def generate():
+        try:
+            result = check_repo_updates()
+            if result["status"] == "updates_available":
+                yield f"data: UPDATES_AVAILABLE|100\n\n"
+                yield f"data: {result['details']}|100\n\n"
+            elif result["status"] == "no_updates":
+                yield "data: NO_UPDATES|100\n\n"
+            else:
+                yield f"data: ERROR|0\n\n"
+        except Exception as e:
+            yield f"data: ERROR|0\n\n"
+    return Response(generate(), content_type="text/event-stream")
 
 @system_bp.route("/update-repo", methods=["POST"])
 def update_repo_route():

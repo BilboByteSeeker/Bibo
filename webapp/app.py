@@ -11,7 +11,7 @@ def create_app():
     app.register_blueprint(home_bp, url_prefix="/home")
     app.register_blueprint(settings_bp, url_prefix="/settings")
     app.register_blueprint(controls_bp, url_prefix="/controls")
-    app.register_blueprint(system_bp, url_prefix="/system")
+    app.register_blueprint(system_bp, url_prefix="/system")  # Register system routes
 
     # Add a default route for "/"
     @app.route("/")

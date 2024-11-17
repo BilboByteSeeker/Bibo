@@ -12,7 +12,7 @@ function initializeButtons() {
 }
 
 function shutdown() {
-    fetch("/shutdown", { method: "POST" })
+    fetch("/system/shutdown", { method: "POST" })
         .then(response => {
             if (response.ok) {
                 alert("The system is shutting down.");
@@ -26,7 +26,7 @@ function shutdown() {
 }
 
 function reboot() {
-    fetch("/reboot", { method: "POST" })
+    fetch("/system/reboot", { method: "POST" })
         .then(response => {
             if (response.ok) {
                 alert("The system is rebooting.");
@@ -54,7 +54,7 @@ function checkRepoUpdates() {
     progressText.textContent = "Starting...";
     progressContainer.classList.remove("hidden");
 
-    const eventSource = new EventSource("/check-repo-updates");
+    const eventSource = new EventSource("/system/check-repo-updates");
 
     eventSource.onmessage = (event) => {
         const [output, progress] = event.data.split("|");
@@ -105,7 +105,7 @@ function checkSystemUpdates() {
     progressText.textContent = "Starting...";
     progressContainer.classList.remove("hidden");
 
-    const eventSource = new EventSource("/check-system-updates");
+    const eventSource = new EventSource("/system/check-system-updates");
 
     eventSource.onmessage = (event) => {
         const [output, progress] = event.data.split("|");
@@ -138,7 +138,7 @@ function updateRepository() {
     spinner.classList.remove("hidden");
     buttonText.textContent = "Updating Repository...";
 
-    fetch("/update-repo", { method: "POST" })
+    fetch("/system/update-repo", { method: "POST" })
         .then(response => {
             if (response.ok) {
                 return response.json();
