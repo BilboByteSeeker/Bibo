@@ -1,9 +1,10 @@
 import subprocess
 import os
 
-def configure_git_identity(repo_path):
-    """Ensure Git identity is configured for commits in the specific repository."""
+def configure_git_identity_and_strategy(repo_path):
+    """Ensure Git identity and pull strategy are configured for commits."""
     try:
+        # Configure user identity
         subprocess.run(
             ["git", "-C", repo_path, "config", "user.email", "robot@example.com"],
             check=True,
@@ -18,9 +19,17 @@ def configure_git_identity(repo_path):
             stderr=subprocess.PIPE,
             text=True
         )
-        print("Git identity configured successfully.")  # Debug log
+        # Configure pull strategy (merge by default)
+        subprocess.run(
+            ["git", "-C", repo_path, "config", "pull.rebase", "false"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        print("Git identity and pull strategy configured successfully.")  # Debug log
     except subprocess.CalledProcessError as e:
-        print(f"Error configuring Git identity: {e.stderr}")  # Debug log
+        print(f"Error configuring Git identity or strategy: {e.stderr}")  # Debug log
 
 def check_system_updates():
     """Stream the output of checking system updates."""
@@ -97,9 +106,9 @@ def update_repository():
         return {"status": "error", "message": "Repository not found"}
 
     try:
-        # Configure Git identity
-        print("Configuring Git identity...")  # Debug log
-        configure_git_identity(repo_path)
+        # Configure Git identity and pull strategy
+        print("Configuring Git identity and pull strategy...")  # Debug log
+        configure_git_identity_and_strategy(repo_path)
 
         # Check for uncommitted changes
         print("Checking for uncommitted changes...")  # Debug log
