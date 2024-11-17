@@ -74,8 +74,40 @@ def update_repository():
     repo_path = "/home/bilbo/Bibo"
     if not os.path.exists(repo_path):
         return {"status": "error", "message": "Repository not found"}
+    
     try:
-        subprocess.run(["git", "-C", repo_path, "pull"], check=True)
-        return {"status": "success", "message": "Repository updated successfully"}
+        # Check for uncommitted changes
+        status_process = subprocess.run(
+            ["git", "-C", repo_path, "status", "--porcelain"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        uncommitted_changes = status_process.stdout.strip()
+
+        if uncommitted_changes:
+            return {
+                "status": "error",
+                "message": "Repository has uncommitted changes. Please commit or stash them before updating."
+            }
+        
+        # Perform the pull
+        pull_process = subprocess.run(
+            ["git", "-C", repo_path, "pull"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        return {
+            "status": "success",
+            "message": "Repository updated successfully",
+            "details": pull_process.stdout
+        }
+    
     except subprocess.CalledProcessError as e:
-        return {"status": "error", "message": str(e)}
+        error_message = e.stderr if hasattr(e, "stderr") else str(e)
+        return {"status": "error", "message": f"Git error: {error_message}"}
+    except Exception as e:
+        return {"status": "error", "message": f"Unexpected error: {str(e)}"}
+
