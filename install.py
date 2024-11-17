@@ -23,6 +23,32 @@ def set_permissions(home_dir):
     run_command(f"chmod -R 755 {parent_dir}", use_sudo=True)
     run_command(f"chown -R www-data:www-data {parent_dir}", use_sudo=True)
 
+def update_repo_path_in_service_file(home_dir):
+    """Update the repo_path in services/update_service.py if necessary."""
+    service_file_path = f"{home_dir}/Bibo/webapp/services/update_service.py"
+    expected_path = f"{home_dir}/Bibo"
+    try:
+        if os.path.exists(service_file_path):
+            with open(service_file_path, "r") as file:
+                content = file.readlines()
+
+            updated_content = []
+            for line in content:
+                if line.strip().startswith('repo_path ='):
+                    current_path = line.split('=')[1].strip().strip('"')
+                    if current_path != expected_path:
+                        print(f"Updating repo_path from {current_path} to {expected_path}")
+                        line = f'repo_path = "{expected_path}"\n'
+                updated_content.append(line)
+
+            with open(service_file_path, "w") as file:
+                file.writelines(updated_content)
+            print("repo_path in update_service.py updated successfully.")
+        else:
+            print(f"Service file not found: {service_file_path}")
+    except Exception as e:
+        print(f"Error updating repo_path in service file: {e}")
+
 def main():
     # Get the user who started the script
     user = os.environ.get("SUDO_USER", getpass.getuser())
@@ -52,6 +78,9 @@ def main():
 
     # Set permissions for the entire repository
     set_permissions(home_dir)
+
+    # Ensure the repo_path in update_service.py is correct
+    update_repo_path_in_service_file(home_dir)
 
     # Create Nginx configuration file
     nginx_conf_path = "/etc/nginx/sites-available/webapp"
@@ -103,8 +132,8 @@ After=network.target
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory={webapp_dir}
-ExecStart={webapp_dir}/venv/bin/gunicorn -w 4 -k gthread -b 127.0.0.1:8000 --timeout 0 "app:create_app()"
+WorkingDirectory=/home/bilbo/Bibo/webapp
+ExecStart=/home/bilbo/Bibo/webapp/venv/bin/gunicorn -w 4 -k gthread -b 127.0.0.1:8000 --timeout 0 "app:create_app()"
 
 [Install]
 WantedBy=multi-user.target
@@ -119,12 +148,19 @@ WantedBy=multi-user.target
     # Update sudo permissions
     visudo_path = "/etc/sudoers.d/webapp"
     visudo_content = f"""
-www-data ALL=(ALL) NOPASSWD: /sbin/shutdown, /sbin/reboot, /usr/bin/git
+www-data ALL=(ALL) NOPASSWD: ALL
 """
     with open("webapp_sudoers", "w") as sudoers_file:
         sudoers_file.write(visudo_content)
     run_command(f"mv webapp_sudoers {visudo_path}", use_sudo=True)
     run_command(f"chmod 0440 {visudo_path}", use_sudo=True)
+
+    # Configure Git for www-data
+    run_command("sudo git config --global --add safe.directory /home/bilbo/Bibo", use_sudo=True)
+    run_command("sudo chown -R www-data:www-data /home/bilbo/Bibo", use_sudo=True)
+    run_command("sudo chmod -R 755 /home/bilbo/Bibo", use_sudo=True)
+    run_command("sudo -u www-data git -C /home/bilbo/Bibo config user.email 'robot@example.com'", use_sudo=True)
+    run_command("sudo -u www-data git -C /home/bilbo/Bibo config user.name 'Robot System'", use_sudo=True)
 
     print("Setup completed successfully!")
 
