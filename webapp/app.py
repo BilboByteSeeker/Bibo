@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect
 from routes.home import home_bp
 from routes.settings import settings_bp
 from routes.controls import controls_bp
@@ -13,8 +13,13 @@ def create_app():
     app.register_blueprint(controls_bp, url_prefix="/controls")
     app.register_blueprint(system_bp, url_prefix="/system")
 
+    # Add a default route for "/"
+    @app.route("/")
+    def index():
+        return redirect("/home")  # Redirect to the home blueprint
+
     return app
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

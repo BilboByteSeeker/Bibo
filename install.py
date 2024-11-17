@@ -9,6 +9,20 @@ def run_command(command, use_sudo=False):
     print(f"Running: {command}")
     subprocess.run(command, shell=True, check=True)
 
+def set_permissions(home_dir):
+    """Ensure correct permissions for the web application."""
+    webapp_dir = f"{home_dir}/Bibo/webapp"
+    parent_dir = os.path.dirname(webapp_dir)
+
+    # Set permissions for /home/<user>
+    print("Setting permissions for the home directory...")
+    run_command(f"chmod 711 {home_dir}", use_sudo=True)
+
+    # Set permissions for /home/<user>/Bibo and all subdirectories
+    print("Setting permissions for the Bibo directory...")
+    run_command(f"chmod -R 755 {parent_dir}", use_sudo=True)
+    run_command(f"chown -R www-data:www-data {parent_dir}", use_sudo=True)
+
 def main():
     # Get the user who started the script
     user = os.environ.get("SUDO_USER", getpass.getuser())
@@ -37,9 +51,7 @@ def main():
     run_command(f"{webapp_dir}/venv/bin/pip install flask gunicorn")
 
     # Set permissions for the entire repository
-    repo_path = f"{home_dir}/Bibo"
-    run_command(f"chown -R www-data:www-data {repo_path}", use_sudo=True)
-    run_command(f"chmod -R 775 {repo_path}", use_sudo=True)
+    set_permissions(home_dir)
 
     # Create Nginx configuration file
     nginx_conf_path = "/etc/nginx/sites-available/webapp"
@@ -92,7 +104,7 @@ After=network.target
 User=www-data
 Group=www-data
 WorkingDirectory={webapp_dir}
-ExecStart={webapp_dir}/venv/bin/gunicorn -w 4 -k gthread -b 127.0.0.1:8000 --timeout 0 app:app
+ExecStart={webapp_dir}/venv/bin/gunicorn -w 4 -k gthread -b 127.0.0.1:8000 --timeout 0 "app:create_app()"
 
 [Install]
 WantedBy=multi-user.target
