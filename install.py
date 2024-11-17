@@ -11,17 +11,13 @@ def run_command(command, use_sudo=False):
 
 def set_permissions(home_dir):
     """Ensure correct permissions for the web application."""
-    webapp_dir = f"{home_dir}/Bibo/webapp"
-    parent_dir = os.path.dirname(webapp_dir)
-
-    # Set permissions for /home/<user>
     print("Setting permissions for the home directory...")
     run_command(f"chmod 711 {home_dir}", use_sudo=True)
 
-    # Set permissions for /home/<user>/Bibo and all subdirectories
     print("Setting permissions for the Bibo directory...")
-    run_command(f"chmod -R 755 {parent_dir}", use_sudo=True)
-    run_command(f"chown -R www-data:www-data {parent_dir}", use_sudo=True)
+    bibo_dir = f"{home_dir}/Bibo"
+    run_command(f"chmod -R 755 {bibo_dir}", use_sudo=True)
+    run_command(f"chown -R www-data:www-data {bibo_dir}", use_sudo=True)
 
 def update_repo_path_in_service_file(home_dir):
     """Update the repo_path in services/update_service.py if necessary."""
@@ -67,9 +63,9 @@ def main():
     user = os.environ.get("SUDO_USER", getpass.getuser())
     home_dir = f"/home/{user}"  # User's home directory based on username
 
-    # Paths for the web application and `app.py`
+    # Paths for the web application and app.py
     webapp_dir = f"{home_dir}/Bibo/webapp"
-    static_dir = f"{webapp_dir}/static"  # Static files directory
+    static_dir = f"{webapp_dir}/static"
     templates_dir = f"{webapp_dir}/templates"
     routes_dir = f"{webapp_dir}/routes"
     services_dir = f"{webapp_dir}/services"
@@ -146,7 +142,7 @@ After=network.target
 User=www-data
 Group=www-data
 WorkingDirectory={webapp_dir}
-ExecStart={webapp_dir}/venv/bin/gunicorn -w 4 -k gthread -b 127.0.0.1:8000 --timeout 0 "app:create_app()"
+ExecStart={webapp_dir}/venv/bin/gunicorn -w 4 -k gthread -b 127.0.0.1:8000 --timeout 0 "webapp.app:create_app"
 
 [Install]
 WantedBy=multi-user.target

@@ -63,7 +63,7 @@ def install_system_updates():
 
 def check_repo_updates():
     """Check for repository updates."""
-    repo_path = "/home/bilbo/Bibo"
+    repo_path = "/home/test/Bibo"  # Adjusted dynamically in the installation script
     print(f"Checking repository at {repo_path}")
 
     if not os.path.exists(repo_path):
@@ -101,16 +101,14 @@ def check_repo_updates():
 
 def update_repository():
     """Update the repository by committing local changes before pulling."""
-    repo_path = "/home/bilbo/Bibo"
+    repo_path = "/home/test/Bibo"
     if not os.path.exists(repo_path):
         return {"status": "error", "message": "Repository not found"}
 
     try:
-        # Configure Git identity and pull strategy
         print("Configuring Git identity and pull strategy...")
         configure_git_identity_and_strategy(repo_path)
 
-        # Check for uncommitted changes
         print("Checking for uncommitted changes...")
         status_process = subprocess.run(
             ["git", "-C", repo_path, "status", "--porcelain"],
@@ -137,7 +135,6 @@ def update_repository():
                 text=True
             )
 
-        # Fetch updates before pulling
         print("Fetching updates...")
         subprocess.run(
             ["git", "-C", repo_path, "fetch"],
@@ -147,7 +144,6 @@ def update_repository():
             text=True
         )
 
-        # Perform the pull
         print("Performing git pull...")
         pull_process = subprocess.run(
             ["git", "-C", repo_path, "pull"],
@@ -158,7 +154,6 @@ def update_repository():
         )
         print(f"Git pull output: {pull_process.stdout}")
 
-        # Double-check repository status
         status_check = subprocess.run(
             ["git", "-C", repo_path, "status"],
             stdout=subprocess.PIPE,
@@ -180,4 +175,4 @@ def update_repository():
     except Exception as e:
         error_message = f"Unexpected error: {str(e)}"
         print(f"Unexpected error: {error_message}")
-        return {"status": "error", "message": error_message}
+        return {"status": "error", "message": error_message"}
