@@ -1,6 +1,27 @@
 import subprocess
 import os
 
+def configure_git_identity(repo_path):
+    """Ensure Git identity is configured for commits in the specific repository."""
+    try:
+        subprocess.run(
+            ["git", "-C", repo_path, "config", "user.email", "robot@example.com"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        subprocess.run(
+            ["git", "-C", repo_path, "config", "user.name", "Robot System"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        print("Git identity configured successfully.")  # Debug log
+    except subprocess.CalledProcessError as e:
+        print(f"Error configuring Git identity: {e.stderr}")  # Debug log
+
 def check_system_updates():
     """Stream the output of checking system updates."""
     process = subprocess.Popen(
@@ -76,6 +97,10 @@ def update_repository():
         return {"status": "error", "message": "Repository not found"}
 
     try:
+        # Configure Git identity
+        print("Configuring Git identity...")  # Debug log
+        configure_git_identity(repo_path)
+
         # Check for uncommitted changes
         print("Checking for uncommitted changes...")  # Debug log
         status_process = subprocess.run(
@@ -88,12 +113,23 @@ def update_repository():
 
         if uncommitted_changes:
             print("Uncommitted changes detected. Committing changes...")  # Debug log
-            subprocess.run(["git", "-C", repo_path, "add", "."], check=True)
-            subprocess.run(
-                ["git", "-C", repo_path, "commit", "-m", "Auto-commit local changes before pull"],
-                check=True
+            commit_process = subprocess.run(
+                ["git", "-C", repo_path, "add", "."],
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
             )
-            print("Local changes committed successfully.")  # Debug log
+            print(f"Git add output: {commit_process.stdout}")  # Debug log
+
+            commit_process = subprocess.run(
+                ["git", "-C", repo_path, "commit", "-m", "Auto-commit local changes before pull"],
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            print(f"Git commit output: {commit_process.stdout}")  # Debug log
 
         # Perform the pull
         print("Performing git pull...")  # Debug log
