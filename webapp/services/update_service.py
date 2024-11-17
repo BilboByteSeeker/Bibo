@@ -29,6 +29,38 @@ def configure_git_identity_and_strategy(repo_path):
     except subprocess.CalledProcessError as e:
         print(f"Error configuring Git identity or strategy: {e.stderr}")
 
+def check_system_updates():
+    """Stream the output of checking system updates."""
+    try:
+        process = subprocess.Popen(
+            ["sudo", "apt", "update"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        for line in iter(process.stdout.readline, ""):
+            yield line
+        process.stdout.close()
+        process.wait()
+    except Exception as e:
+        yield f"Error checking system updates: {str(e)}"
+
+def install_system_updates():
+    """Stream the output of installing system updates."""
+    try:
+        process = subprocess.Popen(
+            ["sudo", "apt", "upgrade", "-y"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        for line in iter(process.stdout.readline, ""):
+            yield line
+        process.stdout.close()
+        process.wait()
+    except Exception as e:
+        yield f"Error installing system updates: {str(e)}"
+
 def check_repo_updates():
     """Check for repository updates."""
     repo_path = "/home/bilbo/Bibo"
@@ -107,14 +139,13 @@ def update_repository():
 
         # Fetch updates before pulling
         print("Fetching updates...")
-        fetch_process = subprocess.run(
+        subprocess.run(
             ["git", "-C", repo_path, "fetch"],
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
         )
-        print(f"Fetch output: {fetch_process.stdout}")
 
         # Perform the pull
         print("Performing git pull...")
@@ -134,7 +165,7 @@ def update_repository():
             stderr=subprocess.PIPE,
             text=True
         )
-        if "up to date" in status_check.stdout:
+        if "up to date" in status_check.stdout.lower():
             print("Repository is already up to date.")
         return {
             "status": "success",
